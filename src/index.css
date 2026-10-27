@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+:root {
+  --ink: #1c1c1a;
+  --ink-2: #5f5e5a;
+  --ink-3: #8a8983;
+  --line: #e8e6df;
+  --paper: #fafafa;
+  --card: #ffffff;
+  --brand: #185fa5;
+  --brand-soft: #e6f1fb;
+  --good: #3b6d11;
+  --ok: #ba7517;
+  --bad: #a32d2d;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.9); opacity: 0.4; }
+  60% { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.pop {
+  animation: pop 260ms ease-out;
+}
+
+@keyframes rise {
+  0% { transform: translateY(6px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.rise {
+  animation: rise 220ms ease-out;
+}
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
+
+.wave-bar {
+  transform-origin: center;
+  animation: wave 720ms ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.breathe {
+  animation: breathe 900ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop, .rise, .wave-bar, .breathe { animation: none; }
+}

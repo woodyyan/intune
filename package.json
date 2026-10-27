@@ -1,0 +1,26 @@
+{
+  "name": "intune",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "verify": "tsc scripts/verify.ts --ignoreConfig --outDir .tmp-verify --module commonjs --target es2022 --skipLibCheck --rootDir . && printf '{\"type\":\"commonjs\"}' > .tmp-verify/package.json && node .tmp-verify/scripts/verify.js"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tone": "^15.1.22"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

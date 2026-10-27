@@ -1,0 +1,25 @@
+# 依赖
+node_modules
+
+# 构建产物
+dist
+.tmp-verify
+.vite
+
+# 环境变量与密钥
+.env
+.env.local
+.env.*.local
+
+# 编辑器与系统
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 本地工作笔记（不入库）
+.workbuddy/
