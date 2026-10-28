@@ -1,5 +1,6 @@
-import { dayKey, daysAgoKey, mean } from '../lib/music';
+import { mean } from '../lib/music';
 import { exportData, pitchScore, weakSpot } from '../lib/storage';
+import { buildTrend } from '../lib/trend';
 import type { Progress } from '../types';
 
 type Props = {
@@ -10,6 +11,15 @@ type Props = {
 const W = 460;
 const H = 108;
 const BASE = H - 26;
+const PAD_L = 26;
+const PAD_R = 26;
+const PASS_LINE = 70;
+
+/** 分数 20..100 映射到图表高度 */
+function yOf(value: number): number {
+  const y = BASE - ((value - 20) / 80) * (H - 40);
+  return Math.max(6, Math.min(BASE, y));
+}
 
 function Stat({ label, value, unit, hint }: { label: string; value: string; unit?: string; hint: string }) {
   return (
@@ -34,13 +44,8 @@ export default function ProgressPanel({ progress, onExit }: Props) {
   const recent = history.slice(-7);
   const avgCents = recent.length ? Math.round(mean(recent.map((h) => h.meanAbsCents))) : 0;
 
-  const days = Array.from({ length: 14 }, (_, i) => daysAgoKey(13 - i));
-  const series = days.map((d) => {
-    const recs = history.filter((h) => dayKey(h.ts) === d);
-    return recs.length ? Math.round(mean(recs.map((r) => r.score))) : null;
-  });
-  const valid = series.filter((v): v is number => v !== null);
-  const best = valid.length ? Math.max(...valid) : 0;
+  const trend = buildTrend(history);
+  const best = trend.best;
 
   const last30 = history.slice(-30);
   const near = last30.filter((h) => h.meanAbsCents <= 20).length;
@@ -48,15 +53,23 @@ export default function ProgressPanel({ progress, onExit }: Props) {
   const far = last30.filter((h) => h.meanAbsCents > 50).length;
   const total = last30.length || 1;
 
-  const points: string[] = [];
-  series.forEach((v, i) => {
-    if (v === null) return;
-    const x = 10 + (i * (W - 30)) / 13;
-    const y = BASE - ((v - 40) / 60) * (H - 40);
-    points.push(`${x.toFixed(1)},${Math.max(6, Math.min(BASE, y)).toFixed(1)}`);
-  });
-
-  const areaPath = points.length > 1 ? `M ${points[0].split(',')[0]},${BASE} L ${points.join(' L ')} L ${points[points.length - 1].split(',')[0]},${BASE} Z` : '';
+  const pts = trend.points.map((p) => ({
+    x: PAD_L + p.pos * (W - PAD_L - PAD_R),
+    y: yOf(p.value),
+    value: p.value,
+  }));
+  const line = pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area =
+    pts.length > 1
+      ? `M ${pts[0].x.toFixed(1)},${BASE} L ${line.split(' ').join(' L ')} L ${pts[pts.length - 1].x.toFixed(1)},${BASE} Z`
+      : '';
+  const passY = yOf(PASS_LINE);
+  const trendTitle =
+    trend.unit === 'day'
+      ? '音准分趋势 · 近 14 天'
+      : trend.unit === 'round'
+        ? `音准分趋势 · 最近 ${trend.points.length} 次`
+        : '音准分趋势';
 
   const spot = weakSpot(history);
 
@@ -89,9 +102,9 @@ export default function ProgressPanel({ progress, onExit }: Props) {
       <div className="it-card mt-4 p-4">
         <div className="flex items-baseline justify-between gap-2">
           <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-            音准分趋势 · 近 14 天
+            {trendTitle}
           </p>
-          {valid.length > 0 && (
+          {trend.points.length > 0 && (
             <span className="it-badge" style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}>
               最高 {best}
             </span>
@@ -105,11 +118,23 @@ export default function ProgressPanel({ progress, onExit }: Props) {
               <stop offset="100%" stopColor="var(--brand)" stopOpacity="0" />
             </linearGradient>
           </defs>
-          <line x1="10" y1={BASE} x2={W - 20} y2={BASE} stroke="var(--line)" strokeWidth="1" />
-          {areaPath && <path d={areaPath} fill="url(#itArea)" />}
-          {points.length > 1 && (
+          <line
+            x1={PAD_L - 8}
+            y1={passY}
+            x2={W - PAD_R + 8}
+            y2={passY}
+            stroke="var(--line-2)"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+          />
+          <text x={PAD_L - 12} y={passY} fontSize="10" fill="var(--ink-3)" textAnchor="end" dominantBaseline="central">
+            {PASS_LINE}
+          </text>
+          <line x1={PAD_L - 8} y1={BASE} x2={W - PAD_R + 8} y2={BASE} stroke="var(--line)" strokeWidth="1" />
+          {area && <path d={area} fill="url(#itArea)" />}
+          {pts.length > 1 && (
             <polyline
-              points={points.join(' ')}
+              points={line}
               fill="none"
               stroke="var(--brand)"
               strokeWidth="2"
@@ -117,20 +142,44 @@ export default function ProgressPanel({ progress, onExit }: Props) {
               strokeLinecap="round"
             />
           )}
-          {points.map((p, i) => {
-            const [x, y] = p.split(',').map(Number);
-            return <circle key={i} cx={x} cy={y} r="2.6" fill="var(--card)" stroke="var(--brand)" strokeWidth="1.6" />;
-          })}
-          <text x="10" y={H - 8} fontSize="11" fill="var(--ink-3)">
-            14 天前
+          {pts.map((p, i) => (
+            <circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r={pts.length === 1 ? 4.5 : 2.8}
+              fill="var(--card)"
+              stroke="var(--brand)"
+              strokeWidth="1.8"
+            />
+          ))}
+          {pts.length === 1 && (
+            <text
+              x={pts[0].x}
+              y={pts[0].y - 12}
+              fontSize="12"
+              fontWeight="500"
+              fill="var(--brand)"
+              textAnchor="middle"
+            >
+              {pts[0].value}
+            </text>
+          )}
+          <text x={PAD_L - 8} y={H - 8} fontSize="11" fill="var(--ink-3)">
+            {trend.unit === 'day' ? '14 天前' : '最早'}
           </text>
-          <text x={W - 50} y={H - 8} fontSize="11" fill="var(--ink-3)">
-            今天
+          <text x={W - PAD_R + 8} y={H - 8} fontSize="11" fill="var(--ink-3)" textAnchor="end">
+            {trend.unit === 'day' ? '今天' : '最近'}
           </text>
         </svg>
-        {valid.length === 0 && (
+        {trend.unit === 'empty' && (
           <p className="text-[13px] mt-1" style={{ color: 'var(--ink-3)' }}>
             还没有数据，先去练一关。
+          </p>
+        )}
+        {trend.unit === 'round' && trend.points.length > 1 && (
+          <p className="text-[11.5px] mt-1" style={{ color: 'var(--ink-3)' }}>
+            练满两天后，这里会自动切换成按天看的长期趋势。
           </p>
         )}
       </div>

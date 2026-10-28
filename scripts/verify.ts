@@ -2,7 +2,8 @@ import { YinDetector } from '../src/lib/yin';
 import { centsBetween, midiToFreq } from '../src/lib/music';
 import { scoreRound, type Sample } from '../src/lib/scoring';
 import { generateRound } from '../src/lib/curriculum';
-import type { Note } from '../src/types';
+import { buildTrend } from '../src/lib/trend';
+import type { Note, SessionRecord } from '../src/types';
 
 let failed = 0;
 function check(name: string, ok: boolean, detail: string) {
@@ -192,6 +193,46 @@ check(
 const phrase = generateRound('phrase', 5, range);
 const outOfRange = phrase.notes.filter((n) => n.midi < range.low - 3 || n.midi > range.high + 3);
 check('旋律移调后落在音域内', outOfRange.length === 0, `${phrase.phraseName} notes=${phrase.notes.map((n) => n.midi).join(',')}`);
+
+const NOW = Date.now();
+const rec = (score: number, ts: number): SessionRecord => ({
+  ts,
+  stage: 'longtone',
+  score,
+  meanAbsCents: 30,
+  hitRate: 0.7,
+  label: 'test',
+});
+
+const todayOnly = [72, 78, 81, 85].map((s, i) => rec(s, NOW - (4 - i) * 60000));
+const t1 = buildTrend(todayOnly, NOW);
+check(
+  '今天练了多关也要看得到趋势（旧 bug：按天聚合只有 1 点，折线画不出来）',
+  t1.unit === 'round' && t1.points.length === 4 && t1.best === 85,
+  `unit=${t1.unit} points=${t1.points.length} values=${t1.points.map((p) => p.value).join(',')}`,
+);
+
+const single = buildTrend([rec(76, NOW)], NOW);
+check(
+  '只练过 1 次时不空白，单点也要能画',
+  single.unit === 'round' && single.points.length === 1 && single.points[0].value === 76,
+  `unit=${single.unit} points=${single.points.length}`,
+);
+
+const spread = [rec(60, NOW - 3 * 86400000), rec(70, NOW - 86400000), rec(80, NOW - 3600000)];
+const t2 = buildTrend(spread, NOW);
+check(
+  '跨天数据仍按天聚合',
+  t2.unit === 'day' && t2.dayCount === 3 && t2.points.length === 3,
+  `unit=${t2.unit} dayCount=${t2.dayCount} values=${t2.points.map((p) => p.value).join(',')}`,
+);
+
+const empty = buildTrend([], NOW);
+check('没有历史时是空态', empty.unit === 'empty' && empty.points.length === 0, `unit=${empty.unit}`);
+
+const many = Array.from({ length: 40 }, (_, i) => rec(50 + (i % 20), NOW - (40 - i) * 60000));
+const t3 = buildTrend(many, NOW);
+check('按次展示最多取最近 14 次', t3.unit === 'round' && t3.points.length === 14, `points=${t3.points.length}`);
 
 console.log(failed === 0 ? '\nALL PASS' : `\n${failed} FAILED`);
 if (failed > 0) throw new Error(`${failed} checks failed`);

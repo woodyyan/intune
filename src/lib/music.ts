@@ -59,6 +59,6 @@ export function dayKey(ts: number): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-export function daysAgoKey(n: number): string {
-  return dayKey(Date.now() - n * 86400000);
+export function daysAgoKey(n: number, from: number = Date.now()): string {
+  return dayKey(from - n * 86400000);
 }
