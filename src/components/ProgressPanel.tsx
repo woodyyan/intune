@@ -85,8 +85,12 @@ export default function ProgressPanel({ progress, onExit }: Props) {
         <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} className="mt-2" role="img">
           <title>近 14 天音准分趋势</title>
           <line x1="10" y1={H - 26} x2={W - 20} y2={H - 26} stroke="#e8e6df" strokeWidth="1" />
-          {points.length > 1 && <polyline points={points.join(' ')} fill="none" stroke="#185fa5" strokeWidth="1.5" />}
-          {points.length === 1 && <circle cx={10} cy={Number(points[0].split(',')[1])} r="3" fill="#185fa5" />}
+          {points.length > 1 && (
+            <polyline points={points.join(' ')} fill="none" stroke="var(--brand)" strokeWidth="1.5" />
+          )}
+          {points.length === 1 && (
+            <circle cx={10} cy={Number(points[0].split(',')[1])} r="3" fill="var(--brand)" />
+          )}
           <text x="10" y={H - 8} fontSize="11" fill="#8a8983">
             14 天前
           </text>

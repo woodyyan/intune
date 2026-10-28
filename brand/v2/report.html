@@ -1,0 +1,157 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<title>Intune 标识技术报告</title><style>
+:root{--ink:#1c1c1a;--ink2:#5f5e5a;--ink3:#8a8983;--line:#e8e6df;--paper:#fafafa;--brand:#1B4A63;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 28px 80px}
+h1{font-size:26px;font-weight:500;margin:0 0 4px}
+h2{font-size:19px;font-weight:500;margin:56px 0 6px;padding-top:20px;border-top:1px solid var(--line)}
+h3{font-size:15px;font-weight:500;margin:26px 0 8px}
+p{margin:6px 0;color:var(--ink2);font-size:14px}
+.lead{font-size:15px;color:var(--ink);max-width:640px}
+table{border-collapse:collapse;width:100%;margin-top:10px;font-size:13px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#fff;font-weight:500;color:var(--ink)}
+td.num{font-variant-numeric:tabular-nums}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}
+.dark{background:var(--brand);border-color:var(--brand)}
+.dark p,.dark h3{color:#fff}
+.mono{background:#141414;border-color:#141414}
+.row{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.cell{text-align:center}
+.cell span{display:block;font-size:11px;color:var(--ink3);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:14px}
+.lock{display:flex;align-items:center;gap:14px}
+.lock svg{display:block;flex:none}
+.wm{font-size:26px;font-weight:500;letter-spacing:-.01em;line-height:1.15}
+.wm-sub{font-size:13px;color:var(--ink2)}
+.dark .wm-sub{color:rgba(255,255,255,.72)}
+.tag{display:inline-block;font-size:11px;color:var(--ink3);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin:0 6px 6px 0}
+ul{margin:6px 0;padding-left:20px}
+li{font-size:14px;color:var(--ink2);margin:3px 0}
+.ok{color:#3b6d11}
+</style></head><body><div class="wrap">
+<h1>Intune 标识 · 全量技术报告</h1>
+<p class="lead">「同心 Concentric」— 几何推导链、色彩全量、变体矩阵、缩放对照、场景 mockup、决策记录与复现指引。</p>
+
+<h2>1. KPI 摘要</h2>
+<table><thead><tr><th>指标</th><th>结果</th></tr></thead><tbody><tr><td>图形元素数</td><td>2（弧 ×2 属同一元素 + 点）—— 元素预算 ≤3 ✓</td></tr><tr><td>颜色数</td><td>1（单色墨青）</td></tr><tr><td>比例系统</td><td>整数比 3:1 / 2:1 + 8u 网格（1024 = 128u）</td></tr><tr><td>白底对比度</td><td>9.52:1（WCAG AAA）</td></tr><tr><td>最小可用尺寸</td><td>24px（16px 用降级版）</td></tr><tr><td>七项检查</td><td>7 / 7 通过</td></tr><tr><td>可复现性</td><td>100% 程序化生成，零手写坐标</td></tr></tbody></table>
+
+<h2>2. 决策链</h2>
+<ul>
+<li><b>v1 阻尼波形（单线 + 基准横线 + 端点）</b> → 淘汰：读成心电图／监护仪，语义被医疗抢走。</li>
+<li><b>v2 调细笔画 + 加起音点</b> → 淘汰：结构没变，「横线 + 单波」的心电完形仍在。</li>
+<li><b>v3 双线缠绕（两条声线收敛合一）</b> → 淘汰：内部柳叶负空间太细密，40px 以下糊掉；整体像装饰曲线。</li>
+<li><b>v4 完整环 + 同心点</b> → 淘汰：与 Target 靶心同构，且无任何构造决定。</li>
+<li><b>v5 定稿</b>：保留同心语义，加入<b>构造决定</b>——环在 12 点 / 6 点各开 40° 缺口，
+把「垂直 = 音高轴、左右 = 两个声部」写进形状；再补一套 ≤32px 加粗降级版。</li>
+</ul>
+
+<h2>3. 几何全量</h2>
+<table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>点半径 r</td><td>120 = 15u</td></tr><tr><td>环内半径</td><td>360 = 45u = 3r</td></tr><tr><td>留白环宽</td><td>240 = 30u = 2r</td></tr><tr><td>环笔宽 SW</td><td>72 = 9u</td></tr><tr><td>环笔画中心半径 R</td><td>396</td></tr><tr><td>外半径</td><td>432 = 54u</td></tr><tr><td>外直径</td><td>864 = 108u</td></tr><tr><td>缺口角</td><td>40°（降级版 30°）</td></tr><tr><td>弧起点/终点（右弧）</td><td>290° → 430°，经过 0°</td></tr><tr><td>弧起点/终点（左弧）</td><td>110° → 250°，经过 180°</td></tr></tbody></table>
+<div class="card" style="margin-top:14px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 640" width="100%" role="img"><title>几何标注</title><g opacity="0.13">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</g><line x1="60" y1="512" x2="964" y2="512" stroke="#1B4A63" stroke-width="1" stroke-dasharray="6 6" opacity="0.35"/><line x1="512" y1="392" x2="512" y2="512" stroke="#1B4A63" stroke-width="1" opacity="0.5"/><line x1="492" y1="392" x2="532" y2="392" stroke="#1B4A63" stroke-width="1.5"/><line x1="492" y1="632" x2="532" y2="632" stroke="#1B4A63" stroke-width="1.5"/><text x="540" y="512" font-size="20" fill="#1B4A63" dominant-baseline="central">r = 120 (15u)</text><text x="540" y="546" font-size="16" fill="#1B4A63" opacity="0.7" dominant-baseline="central">点直径 240</text><line x1="632" y1="196" x2="872" y2="196" stroke="#1B4A63" stroke-width="1.5"/><line x1="632" y1="186" x2="632" y2="206" stroke="#1B4A63" stroke-width="1.5"/><line x1="872" y1="186" x2="872" y2="206" stroke="#1B4A63" stroke-width="1.5"/><text x="752" y="176" font-size="18" fill="#1B4A63" text-anchor="middle">留白 240 = 2×点半径</text><line x1="872" y1="228" x2="872" y2="512" stroke="#1B4A63" stroke-width="1" opacity="0.5"/><text x="884" y="252" font-size="18" fill="#1B4A63">内半径 360 = 3×点半径</text><line x1="872" y1="512" x2="944" y2="512" stroke="#1B4A63" stroke-width="3"/><text x="812" y="470" font-size="16" fill="#1B4A63" text-anchor="end">环笔宽 72 (9u)</text><text x="512" y="86" font-size="18" fill="#1B4A63" text-anchor="middle">缺口 40° @ 12 点 / 6 点</text><text x="512" y="112" font-size="15" fill="#1B4A63" opacity="0.7" text-anchor="middle">左右两条弧 = 两个声部；垂直方向 = 音高轴</text><rect x="80.0" y="80.0" width="864.0" height="864.0" fill="none" stroke="#1B4A63" stroke-width="1" stroke-dasharray="8 6" opacity="0.4"/><text x="80.0" y="66.0" font-size="16" fill="#1B4A63">外直径 864 (108u)</text></svg></div>
+
+<h2>4. 色彩全量</h2>
+<table><thead><tr><th>格式</th><th>值</th></tr></thead><tbody><tr><td>HEX</td><td>#1B4A63</td></tr><tr><td>RGB</td><td>(27, 74, 99)</td></tr><tr><td>CMYK</td><td>(73, 25, 0, 61)</td></tr><tr><td>Pantone</td><td>7690 C（近似）</td></tr><tr><td>白底对比度</td><td>9.52:1</td></tr><tr><td>黑底对比度（反白使用）</td><td>反白版本，符合要求</td></tr></tbody></table>
+
+<h2>5. 变体矩阵</h2>
+<table><thead><tr><th>文件</th><th>说明</th></tr></thead><tbody><tr><td>mark.svg</td><td>主标 1024 画布，含构建注释</td></tr><tr><td>mark-tight.svg</td><td>裁剪版（含净空区），网页/App 主用</td></tr><tr><td>mark-compact.svg</td><td>≤32px 降级：SW 72→120，r 120→172，缺口 40°→30°</td></tr><tr><td>mark-mono.svg</td><td>单色 #111111</td></tr><tr><td>mark-reverse.svg</td><td>反白 #FFFFFF</td></tr><tr><td>favicon.svg</td><td>64 画布方形底板 rx=14 + 反白降级图形</td></tr></tbody></table>
+
+<h2>6. 缩放墙与对照</h2>
+<div class="card"><div class="row"><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="512" height="512" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><span>512px</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="256" height="256" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><span>256px</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="128" height="128" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><span>128px</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="64" height="64" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><span>64px</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="48" height="48" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><span>48px</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 40 944 944" width="944" height="944" role="img" aria-label="Intune">
+<!-- Intune · 同心 · 小尺寸降级版(<=32px)：加粗环、放大点、缺口收窄 -->
+<path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#1B4A63"/>
+</svg><span>32px · 降级</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 40 944 944" width="944" height="944" role="img" aria-label="Intune">
+<!-- Intune · 同心 · 小尺寸降级版(<=32px)：加粗环、放大点、缺口收窄 -->
+<path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#1B4A63"/>
+</svg><span>24px · 降级</span></div><div class="cell"><svg xmlns="http://www.w3.org/2000/svg" viewBox="40 40 944 944" width="944" height="944" role="img" aria-label="Intune">
+<!-- Intune · 同心 · 小尺寸降级版(<=32px)：加粗环、放大点、缺口收窄 -->
+<path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#1B4A63"/>
+</svg><span>16px · 降级</span></div></div></div>
+
+<h2>7. 六场景 mockup</h2>
+<div class="grid"><div><h3>浏览器标签页</h3><div style="background:#f1efea;border-radius:10px 10px 0 0;padding:9px 12px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#d8d5cd"></span><span style="width:10px;height:10px;border-radius:50%;background:#d8d5cd"></span><span style="width:10px;height:10px;border-radius:50%;background:#d8d5cd"></span><span style="margin-left:10px;background:#fff;border-radius:6px 6px 0 0;padding:5px 12px;display:flex;align-items:center;gap:7px;font-size:11px;color:#5f5e5a"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="16" height="16" role="img" aria-label="Intune">
+<rect x="0" y="0" width="16" height="16" rx="14" fill="#1B4A63"/>
+<g transform="translate(5.07 5.07) scale(0.0526)"><path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#FFFFFF"/>
+</g>
+</svg> Intune · 音准练习</span></div><div style="background:#fff;border:1px solid #e8e6df;border-top:0;border-radius:0 0 10px 10px;height:74px;padding:14px 16px"><div style="display:flex;align-items:center;gap:10px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="30" height="30" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><div><div style="font-size:16px;font-weight:500">Intune</div><div style="font-size:11px;color:#8a8983">每天 5 分钟，把音准练回来</div></div></div></div></div><div><h3>手机桌面图标</h3><div style="width:150px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px"><div style="text-align:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="46" height="46" role="img" aria-label="Intune">
+<rect x="0" y="0" width="46" height="46" rx="14" fill="#1B4A63"/>
+<g transform="translate(5.07 5.07) scale(0.0526)"><path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#FFFFFF"/>
+</g>
+</svg><div style="font-size:10px;color:var(--ink3);margin-top:4px">Intune</div></div><div style="text-align:center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="46" height="46" role="img" aria-label="Intune">
+<rect x="0" y="0" width="46" height="46" rx="14" fill="#1B4A63"/>
+<g transform="translate(5.07 5.07) scale(0.0526)"><path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#FFFFFF"/>
+</g>
+</svg><div style="font-size:10px;color:var(--ink3);margin-top:4px">Intune</div></div></div></div><div><h3>名片</h3><div style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:22px 20px;width:260px"><div style="display:flex;align-items:center;gap:10px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="34" height="34" role="img" aria-label="Intune">
+<!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+</svg><div><div style="font-size:16px;font-weight:500;letter-spacing:-.01em">Intune</div><div style="font-size:11px;color:var(--ink2)">音准练习 · Woody</div></div></div></div></div><div><h3>门头 / 招牌</h3><div style="background:var(--brand);border-radius:10px;padding:26px 30px;display:flex;align-items:center;gap:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="54" height="54" role="img" aria-label="Intune">
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#FFFFFF" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#FFFFFF" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#FFFFFF"/>
+</svg><div><div style="font-size:22px;font-weight:500;color:#fff;letter-spacing:-.01em">Intune</div><div style="font-size:12px;color:rgba(255,255,255,.75)">音准练习工作室</div></div></div></div><div><h3>单色印刷</h3><div style="background:#e8e6df;border-radius:10px;padding:26px 30px;display:flex;align-items:center;gap:16px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="54" height="54" role="img" aria-label="Intune">
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#111111" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#111111" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#111111"/>
+</svg><div><div style="font-size:22px;font-weight:500;letter-spacing:-.01em">Intune</div><div style="font-size:12px;color:var(--ink2)">单色印刷 / 烫印</div></div></div></div></div>
+
+<h2>8. 决策记录</h2>
+<table><thead><tr><th>决策</th><th>理由</th></tr></thead><tbody><tr><td>为什么不做波形</td><td>三轮实测都被读成心电图／监护仪；波形是「图表」不是「标志」</td></tr><tr><td>为什么不做双线缠绕</td><td>内部负空间在 40px 以下糊掉，且形态偏装饰</td></tr><tr><td>为什么缺口开在 12/6 点而不是 3/9 点</td><td>3/9 点开口时上下两条弧读作两个独立括号，中心松散；改到 12/6 点后左右弧环抱中心点，凝聚感成立</td></tr><tr><td>为什么缺口 40° 而不是更小</td><td>小缺口在小尺寸会消失，等于把唯一的记忆点做成最脆弱的部分；40° 在任意尺寸都读得出</td></tr><tr><td>为什么主色是墨青 #1B4A63</td><td>避开行业俗套的科技蓝与音乐常用的绿/紫；低饱和深色 + 大留白更接近「高级感」，且白底对比度 9.52:1 优于原品牌蓝</td></tr><tr><td>中央实心圆的国旗风险</td><td>已规避：圆点在环内（有框架）+ 非红白配色，完形是准心不是旗面</td></tr></tbody></table>
+
+<h2>9. 复现指引</h2>
+<ul>
+<li>改参数：<code>brand/v2/build.py</code> 顶部 <code>MAIN</code> / <code>COMPACT</code> 字典。</li>
+<li>重算：<code>python3 brand/v2/build.py</code> → 全部 SVG + geometry.json + <code>src/components/Logo.tsx</code>。</li>
+<li>重出文档：<code>python3 brand/v2/make_docs.py</code> → spec.md / preview.html / report.html。</li>
+<li>主色只改 <code>PRIMARY</code> 一个常量；站内同步改 <code>src/index.css</code> 的 <code>--brand</code>。</li>
+</ul>
+</div></body></html>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Intune">
+<rect x="0" y="0" width="64" height="64" rx="14" fill="#1B4A63"/>
+<g transform="translate(5.07 5.07) scale(0.0526)"><path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#FFFFFF" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#FFFFFF"/>
+</g>
+</svg>

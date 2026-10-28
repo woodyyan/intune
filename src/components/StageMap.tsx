@@ -1,3 +1,4 @@
+import Logo from './Logo';
 import { STAGE_META, stageName } from '../lib/curriculum';
 import { noteLabel } from '../lib/music';
 import {
@@ -22,12 +23,15 @@ export default function StageMap({ progress, onPick, onProgress, onCalibrate }: 
 
   return (
     <div className="mx-auto max-w-[480px] px-5 py-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-[24px] font-medium">Intune</h1>
-          <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
-            每天 5 分钟，把音准练回来
-          </p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Logo size={34} />
+          <div>
+            <h1 className="text-[24px] font-medium leading-[1.2] tracking-[-0.01em]">Intune</h1>
+            <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
+              每天 5 分钟，把音准练回来
+            </p>
+          </div>
         </div>
         <button className="text-[13px]" style={{ color: 'var(--brand)' }} onClick={onProgress}>
           我的进步 →

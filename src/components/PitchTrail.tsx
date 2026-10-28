@@ -26,8 +26,10 @@ export default function PitchTrail({ points, tolerance }: Props) {
         <title>音高轨迹</title>
         <rect x="0" y={MID - band} width={W} height={band * 2} fill="#eaf3de" />
         <line x1="0" y1={MID} x2={W} y2={MID} stroke="#b4b2a9" strokeWidth="0.5" strokeDasharray="3 3" />
-        {points.length > 1 && <polyline points={path} fill="none" stroke="#185fa5" strokeWidth="1.5" />}
-        {last !== null && <circle cx={W} cy={lastY} r="3.5" fill="#185fa5" />}
+        {points.length > 1 && (
+          <polyline points={path} fill="none" stroke="var(--brand)" strokeWidth="1.5" />
+        )}
+        {last !== null && <circle cx={W} cy={lastY} r="3.5" fill="var(--brand)" />}
       </svg>
       <p className="text-[11px] mt-1" style={{ color: 'var(--ink-3)' }}>
         绿带是合格范围，线越平稳说明气息越稳
