@@ -29,8 +29,22 @@ export class MicPitch {
     return this.stream;
   }
 
-  async start(onFrame: (f: PitchFrame) => void): Promise<void> {
+  async start(
+    onFrame: (f: PitchFrame) => void,
+    getCtx: () => AudioContext | null,
+  ): Promise<void> {
     if (this.timer !== null) return;
+    const ctx = getCtx();
+    if (!ctx) throw new Error('AudioContext unavailable');
+    // 先 resume：此时还在用户手势窗口内，iOS 才认
+    if (ctx.state !== 'running') {
+      try {
+        await ctx.resume();
+      } catch {
+        /* 忽略，拿到流以后再试 */
+      }
+    }
+
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: false,
@@ -38,10 +52,15 @@ export class MicPitch {
         autoGainControl: false,
       },
     });
-    const Ctor: typeof AudioContext =
-      window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new Ctor();
-    if (ctx.state === 'suspended') await ctx.resume();
+
+    // iOS 在弹麦克风权限框时会把音频会话挂起，拿到流之后必须再 resume 一次
+    if (ctx.state !== 'running') {
+      try {
+        await ctx.resume();
+      } catch {
+        /* 忽略 */
+      }
+    }
 
     const source = ctx.createMediaStreamSource(stream);
     const analyser = ctx.createAnalyser();
@@ -95,8 +114,13 @@ export class MicPitch {
     this.onFrame = null;
     this.stream?.getTracks().forEach((t) => t.stop());
     this.stream = null;
+    try {
+      this.analyser?.disconnect();
+    } catch {
+      /* 忽略 */
+    }
     this.analyser = null;
-    void this.ctx?.close();
+    // 注意：ctx 是与播放共用的 Tone 上下文，这里绝不能 close
     this.ctx = null;
   }
 }

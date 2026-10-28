@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MicPitch, type PitchFrame } from '../lib/detector';
+import { ensureAudio, rawContext } from '../lib/audio';
 import { midiToFreq } from '../lib/music';
 
 export type EngineStatus = 'idle' | 'starting' | 'running' | 'error';
@@ -20,10 +21,12 @@ export function usePitchEngine() {
     try {
       const mic = micRef.current ?? new MicPitch();
       micRef.current = mic;
+      // 播放与采集共用同一个 AudioContext，避免 iOS 上第二个上下文把播放会话挂起
+      await ensureAudio();
       await mic.start((f) => {
         setFrame(f);
         sinkRef.current?.(f);
-      });
+      }, rawContext);
       setStatus('running');
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);

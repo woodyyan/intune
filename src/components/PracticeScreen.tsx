@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PitchFrame } from '../lib/detector';
-import { VoiceRecorder, phraseSeconds, playBlob, playNotes, stopAll } from '../lib/audio';
+import {
+  IS_IOS,
+  VoiceRecorder,
+  ensureAudio,
+  phraseSeconds,
+  playBlob,
+  playNotes,
+  stopAll,
+} from '../lib/audio';
 import { scoreRound, verdictFor, type Sample } from '../lib/scoring';
 import { centsBetween, noteLabel } from '../lib/music';
 import { generateRound, stageName, toleranceFor, type Range } from '../lib/curriculum';
@@ -152,6 +160,9 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
     setElapsed(0);
     setLiveNote(0);
 
+    // 先把声音解锁了再开麦克风：iOS 的 resume 必须在手势窗口内发起，
+    // 而 getUserMedia 弹权限框会把这个窗口耗光。
+    await ensureAudio();
     if (status !== 'running') await start();
 
     setPhase('listen');
@@ -614,6 +625,12 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
               试听
             </button>
           </div>
+        )}
+
+        {IS_IOS && phase === 'intro' && (
+          <p className="text-[11.5px] mt-2.5 text-center" style={{ color: 'var(--ink-3)' }}>
+            听不到声音？iPhone 机身左侧的静音键如果露出橙色，Safari 不会出声。
+          </p>
         )}
 
         {phase === 'result' && (
