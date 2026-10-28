@@ -20,23 +20,26 @@ export default function PitchRuler({ cents, tolerance }: Props) {
 
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-2">
-        <span className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
+      <div className="flex items-baseline justify-between mb-2 gap-2">
+        <span className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
           实时音分偏差
         </span>
-        <span className="text-[13px] tabular" style={{ color: tone.color }}>
+        <span
+          className="it-badge tabular"
+          style={{ background: 'var(--card)', color: tone.color, border: `1px solid ${tone.color}` }}
+        >
           {shown ? `${cents > 0 ? '+' : ''}${Math.round(cents)}¢ · ${tone.text}` : tone.text}
         </span>
       </div>
 
-      <div className="relative h-4 rounded-full overflow-hidden" style={{ background: '#f09595' }}>
+      <div className="relative h-4 rounded-full overflow-hidden" style={{ background: 'var(--bad-fill)' }}>
         <div
           className="absolute top-0 bottom-0"
-          style={{ left: `${50 - amberHalf}%`, width: `${amberHalf * 2}%`, background: '#ef9f27' }}
+          style={{ left: `${50 - amberHalf}%`, width: `${amberHalf * 2}%`, background: 'var(--ok-fill)' }}
         />
         <div
           className="absolute top-0 bottom-0"
-          style={{ left: `${50 - greenHalf}%`, width: `${greenHalf * 2}%`, background: '#97c459' }}
+          style={{ left: `${50 - greenHalf}%`, width: `${greenHalf * 2}%`, background: 'var(--good-fill)' }}
         />
       </div>
 
@@ -45,10 +48,11 @@ export default function PitchRuler({ cents, tolerance }: Props) {
           className="absolute rounded-full"
           style={{
             left: `${pos}%`,
-            marginLeft: '-1.5px',
-            width: '3px',
-            height: '14px',
+            marginLeft: '-2px',
+            width: '4px',
+            height: '15px',
             background: 'var(--ink)',
+            boxShadow: '0 0 0 2px rgba(255,255,255,0.9)',
             transition: 'left 60ms linear',
           }}
         />

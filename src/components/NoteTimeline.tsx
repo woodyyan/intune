@@ -26,7 +26,7 @@ export default function NoteTimeline({ notes, bpm, elapsed = null, activeIndex =
         </div>
       )}
 
-      <div className="relative h-11 rounded-lg overflow-hidden" style={{ background: 'var(--paper)' }}>
+      <div className="relative h-11 rounded-xl overflow-hidden" style={{ background: 'var(--paper)' }}>
         {notes.map((n, i) => {
           const left = ((n.start * spb) / total) * 100;
           const width = ((n.dur * spb) / total) * 100;
@@ -35,16 +35,23 @@ export default function NoteTimeline({ notes, bpm, elapsed = null, activeIndex =
           return (
             <div
               key={i}
-              className="absolute top-1.5 bottom-1.5 rounded-md flex items-center justify-center overflow-hidden"
+              className="absolute top-1.5 bottom-1.5 rounded-lg flex items-center justify-center overflow-hidden"
               style={{
                 left: `${left}%`,
                 width: `${width}%`,
-                background: isActive ? 'var(--brand)' : done ? '#d3d1c7' : 'var(--brand-soft)',
+                background: isActive
+                  ? 'linear-gradient(135deg, var(--brand-2), var(--brand))'
+                  : done
+                    ? 'var(--line-2)'
+                    : 'var(--brand-soft)',
                 color: isActive ? '#fff' : done ? 'var(--ink-2)' : 'var(--brand)',
+                boxShadow: isActive ? '0 2px 8px rgba(79,70,229,0.28)' : undefined,
                 transition: 'background 120ms linear, color 120ms linear',
               }}
             >
-              <span className="text-[12px] tabular whitespace-nowrap">{noteLabel(n.midi)}</span>
+              <span className="text-[12px] tabular whitespace-nowrap font-medium">
+                {noteLabel(n.midi)}
+              </span>
             </div>
           );
         })}

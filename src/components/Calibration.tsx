@@ -75,83 +75,100 @@ export default function Calibration({ progress, onDone, onExit }: Props) {
 
   return (
     <div className="mx-auto max-w-[480px] px-5 py-6">
-      <button className="text-[13px] mb-4" style={{ color: 'var(--ink-2)' }} onClick={onExit}>
+      <button className="it-btn-ghost px-3 py-1.5 text-[13px]" onClick={onExit}>
         ← 返回
       </button>
 
-      <h1 className="text-[22px] font-medium">音域校准</h1>
-      <p className="text-[14px] mt-1" style={{ color: 'var(--ink-2)' }}>
+      <h1 className="text-[22px] font-semibold mt-3.5">音域校准</h1>
+      <p className="text-[13.5px] mt-1" style={{ color: 'var(--ink-2)' }}>
         用你平时唱歌最舒服的音高，稳稳地唱一个「啊」，保持 3 秒。
       </p>
 
-      <div className="mt-6 rounded-2xl p-5" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+      <div className="it-card mt-5 p-5">
         {phase === 'singing' && (
-          <>
-            <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
-              正在听你的声音…
-            </p>
-            <p className="text-[40px] font-medium tabular mt-2">
+          <div className="text-center">
+            <span className="it-badge" style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}>
+              <span className="breathe">●</span> 正在听你的声音
+            </span>
+            <p
+              className="text-[44px] font-semibold tabular mt-3 leading-none"
+              style={{ color: 'var(--brand)' }}
+            >
               {currentMidi !== null ? noteLabel(currentMidi) : '--'}
             </p>
-            <div className="mt-3 h-2 rounded-full" style={{ background: 'var(--brand-soft)' }}>
+            <div className="mt-4 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--brand-soft)' }}>
               <div
-                className="h-2 rounded-full"
-                style={{ width: `${((3 - left) / 3) * 100}%`, background: 'var(--brand)', transition: 'width 1s linear' }}
+                className="h-1.5 rounded-full"
+                style={{
+                  width: `${((3 - left) / 3) * 100}%`,
+                  background: 'linear-gradient(90deg, var(--brand-2), var(--brand))',
+                  transition: 'width 1s linear',
+                }}
               />
             </div>
             <p className="text-[13px] mt-2 tabular" style={{ color: 'var(--ink-3)' }}>
               还剩 {left} 秒
             </p>
-          </>
+          </div>
         )}
 
         {phase === 'idle' && (
-          <>
-            <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
-              当前音域：{noteLabel(existing.low)} — {noteLabel(existing.high)}
+          <div>
+            <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
+              当前音域
+            </p>
+            <p className="text-[20px] font-semibold tabular mt-0.5">
+              {noteLabel(existing.low)} — {noteLabel(existing.high)}
+            </p>
+            <p className="text-[13px] mt-3" style={{ color: 'var(--ink-2)' }}>
+              校准后，每关的标准音都会落在你唱得最舒服的区间里。
             </p>
             <button
-              className="mt-4 w-full rounded-xl py-3 text-[15px] text-white"
-              style={{ background: 'var(--brand)' }}
+              className="it-btn mt-4 w-full py-3 text-[15px]"
               onClick={begin}
               disabled={status === 'starting'}
             >
               {status === 'starting' ? '正在开启麦克风…' : '开始唱 3 秒'}
             </button>
-          </>
+          </div>
         )}
 
         {phase === 'done' && (
-          <>
-            <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
+          <div className="text-center">
+            <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
               检测到你的舒适音高
             </p>
-            <p className="text-[40px] font-medium tabular mt-2">
+            <p
+              className="text-[44px] font-semibold tabular mt-1 leading-none"
+              style={{ color: median === null ? 'var(--ink-3)' : 'var(--brand)' }}
+            >
               {median !== null ? noteLabel(median) : '没听清'}
             </p>
             {median === null ? (
-              <p className="text-[13px] mt-2" style={{ color: 'var(--bad)' }}>
+              <p className="text-[13px] mt-3" style={{ color: 'var(--bad)' }}>
                 环境太安静或声音太小，戴耳机再来一次。
               </p>
             ) : (
-              <p className="text-[13px] mt-2" style={{ color: 'var(--ink-2)' }}>
-                练习音域将设为 {noteLabel(clamp(median - 8, 36, 84))} — {noteLabel(clamp(median + 8, 40, 88))}
+              <p className="text-[13px] mt-3" style={{ color: 'var(--ink-2)' }}>
+                练习音域将设为{' '}
+                <span className="font-medium" style={{ color: 'var(--ink)' }}>
+                  {noteLabel(clamp(median - 8, 36, 84))} — {noteLabel(clamp(median + 8, 40, 88))}
+                </span>
               </p>
             )}
             <div className="flex gap-2 mt-4">
-              <button className="flex-1 rounded-xl py-3 text-[15px]" style={{ border: '1px solid var(--line)' }} onClick={begin}>
+              <button className="it-btn-ghost flex-1 py-3 text-[15px]" onClick={begin}>
                 重来
               </button>
               <button
-                className="flex-1 rounded-xl py-3 text-[15px] text-white"
-                style={{ background: median === null ? 'var(--ink-3)' : 'var(--brand)' }}
+                className="it-btn flex-1 py-3 text-[15px]"
                 onClick={confirm}
                 disabled={median === null}
               >
                 就用它
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {status === 'error' && (

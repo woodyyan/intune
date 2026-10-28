@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 40 944 944" width="944" height="944" role="img" aria-label="Intune">
 <!-- Intune · 同心 · 小尺寸降级版(<=32px)：加粗环、放大点、缺口收窄 -->
-<path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
-<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#1B4A63" stroke-width="120" stroke-linecap="butt"/>
-<circle cx="512" cy="512" r="172" fill="#1B4A63"/>
+<path d="M 608.3 152.7 A 372 372 0 0 1 608.3 871.3" fill="none" stroke="#4F46E5" stroke-width="120" stroke-linecap="butt"/>
+<path d="M 415.7 871.3 A 372 372 0 0 1 415.7 152.7" fill="none" stroke="#4F46E5" stroke-width="120" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="172" fill="#4F46E5"/>
 </svg>

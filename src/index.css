@@ -1,17 +1,39 @@
 @import 'tailwindcss';
 
 :root {
-  --ink: #1c1c1a;
-  --ink-2: #5f5e5a;
-  --ink-3: #8a8983;
-  --line: #e8e6df;
-  --paper: #fafafa;
+  /* ── 中性 ─────────────────────────────── */
+  --ink: #16161c;
+  --ink-2: #5d5d6b;
+  --ink-3: #747484;
+  --line: #e9eaf2;
+  --line-2: #d9dae8;
+  --paper: #f5f6fb;
   --card: #ffffff;
-  --brand: #1b4a63;
-  --brand-soft: #e4eaee;
-  --good: #3b6d11;
-  --ok: #ba7517;
-  --bad: #a32d2d;
+
+  /* ── 主题：共振紫 Resonance Violet ─────── */
+  --brand: #4f46e5;
+  --brand-2: #7c6cf5;
+  --brand-deep: #3730a3;
+  --brand-soft: #eeecfe;
+  --brand-line: #dcd8fb;
+  --accent: #14b8a6;
+
+  /* ── 语义三档：很准 / 有点飘 / 跑调 ────── */
+  --good: #0f7a3d;
+  --good-soft: #e7f5ec;
+  --good-fill: #a8dcbc;
+  --ok: #a35f00;
+  --ok-soft: #fdf2e0;
+  --ok-fill: #f3c77e;
+  --bad: #c62b21;
+  --bad-soft: #fdeceb;
+  --bad-fill: #f0a49d;
+
+  --grid: #b7b9cc;
+
+  --shadow-1: 0 1px 2px rgba(22, 22, 40, 0.04), 0 8px 20px rgba(22, 22, 40, 0.05);
+  --shadow-2: 0 2px 6px rgba(22, 22, 40, 0.06), 0 16px 36px rgba(22, 22, 40, 0.09);
+  --shadow-brand: 0 6px 16px rgba(79, 70, 229, 0.3);
 }
 
 html,
@@ -22,8 +44,11 @@ body,
 
 body {
   margin: 0;
-  background: var(--paper);
   color: var(--ink);
+  background:
+    radial-gradient(1100px 460px at 50% -200px, rgba(79, 70, 229, 0.1), transparent 68%),
+    var(--paper);
+  background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -40,6 +65,127 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
+/* ── 卡片 ──────────────────────────────── */
+.it-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-1);
+}
+
+.it-inset {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+/* ── 按钮 ──────────────────────────────── */
+.it-btn {
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand));
+  border-radius: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-brand);
+  transition:
+    transform 120ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.it-btn:hover {
+  box-shadow: 0 9px 24px rgba(79, 70, 229, 0.38);
+}
+
+.it-btn:active {
+  transform: translateY(1px);
+}
+
+.it-btn:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: default;
+}
+
+.it-btn-ghost {
+  background: var(--card);
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  font-weight: 500;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 120ms ease;
+}
+
+.it-btn-ghost:hover {
+  background: #fbfbff;
+  border-color: var(--brand-line);
+}
+
+.it-btn-ghost:active {
+  transform: translateY(1px);
+}
+
+/* ── 徽标与标签 ────────────────────────── */
+.it-chip {
+  background: var(--brand-soft);
+  color: var(--brand);
+  border-radius: 11px;
+  font-weight: 500;
+}
+
+.it-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+/* ── 首页 Hero ─────────────────────────── */
+.it-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  color: #fff;
+  background: linear-gradient(135deg, #6f5ef2 0%, #4f46e5 52%, #402fc4 100%);
+  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.26);
+}
+
+.it-hero::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -10%;
+  right: -10%;
+  height: 190%;
+  background: radial-gradient(58% 46% at 80% 16%, rgba(255, 255, 255, 0.3), transparent 70%);
+  pointer-events: none;
+}
+
+.it-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 关卡序号徽章 ──────────────────────── */
+.it-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 @keyframes pop {
   0% { transform: scale(0.9); opacity: 0.4; }
   60% { transform: scale(1.04); opacity: 1; }
@@ -51,16 +197,16 @@ button {
 }
 
 @keyframes rise {
-  0% { transform: translateY(6px); opacity: 0; }
+  0% { transform: translateY(8px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
 .rise {
-  animation: rise 220ms ease-out;
+  animation: rise 260ms ease-out;
 }
 
 @keyframes wave {
-  0%, 100% { transform: scaleY(0.25); }
+  0%, 100% { transform: scaleY(0.22); }
   50% { transform: scaleY(1); }
 }
 
@@ -71,13 +217,24 @@ button {
 
 @keyframes breathe {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.45; }
 }
 
 .breathe {
   animation: breathe 900ms ease-in-out infinite;
 }
 
+@keyframes halo {
+  0% { transform: scale(0.86); opacity: 0.55; }
+  70% { transform: scale(1.12); opacity: 0; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+
+.halo {
+  animation: halo 1s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pop, .rise, .wave-bar, .breathe { animation: none; }
+  .pop, .rise, .wave-bar, .breathe, .halo { animation: none; }
+  .it-btn:active, .it-btn-ghost:active { transform: none; }
 }

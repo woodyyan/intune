@@ -41,7 +41,7 @@ MAIN = dict(dotR=120, innerR=360, sw=72, gapDeg=40.0, clear=48)
 # --- 小尺寸降级版（<=32px）：闭合环 + 加粗 + 放大点 ---
 COMPACT = dict(dotR=172, innerR=312, sw=120, gapDeg=30.0, clear=40)
 
-PRIMARY = "#1B4A63"
+PRIMARY = "#4F46E5"
 MONO = "#111111"
 REVERSE = "#FFFFFF"
 

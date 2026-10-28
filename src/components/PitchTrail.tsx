@@ -21,18 +21,32 @@ export default function PitchTrail({ points, tolerance }: Props) {
   const lastY = last === null ? MID : Math.max(2, Math.min(H - 2, MID - (last / 100) * MID));
 
   return (
-    <div className="rounded-lg p-2" style={{ border: '1px solid var(--line)' }}>
+    <div className="it-inset p-2">
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} role="img">
         <title>音高轨迹</title>
-        <rect x="0" y={MID - band} width={W} height={band * 2} fill="#eaf3de" />
-        <line x1="0" y1={MID} x2={W} y2={MID} stroke="#b4b2a9" strokeWidth="0.5" strokeDasharray="3 3" />
+        <rect x="0" y={MID - band} width={W} height={band * 2} fill="var(--good-soft)" />
+        <line
+          x1="0"
+          y1={MID}
+          x2={W}
+          y2={MID}
+          stroke="var(--grid)"
+          strokeWidth="0.5"
+          strokeDasharray="3 3"
+        />
         {points.length > 1 && (
-          <polyline points={path} fill="none" stroke="var(--brand)" strokeWidth="1.5" />
+          <polyline
+            points={path}
+            fill="none"
+            stroke="var(--brand)"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
         )}
-        {last !== null && <circle cx={W} cy={lastY} r="3.5" fill="var(--brand)" />}
+        {last !== null && <circle cx={W} cy={lastY} r="3.6" fill="var(--accent)" />}
       </svg>
-      <p className="text-[11px] mt-1" style={{ color: 'var(--ink-3)' }}>
-        绿带是合格范围，线越平稳说明气息越稳
+      <p className="text-[11px] mt-1 text-center" style={{ color: 'var(--ink-3)' }}>
+        带内 = 合格范围，线越平稳说明气息越稳
       </p>
     </div>
   );

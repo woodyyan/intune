@@ -8,7 +8,25 @@ type Props = {
 };
 
 const W = 460;
-const H = 96;
+const H = 108;
+const BASE = H - 26;
+
+function Stat({ label, value, unit, hint }: { label: string; value: string; unit?: string; hint: string }) {
+  return (
+    <div className="it-card p-3.5">
+      <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
+        {label}
+      </p>
+      <p className="text-[24px] font-semibold tabular leading-[1.2] mt-0.5">
+        {value}
+        {unit && <span className="text-[14px] font-normal" style={{ color: 'var(--ink-3)' }}>{unit}</span>}
+      </p>
+      <p className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
+        {hint}
+      </p>
+    </div>
+  );
+}
 
 export default function ProgressPanel({ progress, onExit }: Props) {
   const history = progress.history;
@@ -34,110 +52,127 @@ export default function ProgressPanel({ progress, onExit }: Props) {
   series.forEach((v, i) => {
     if (v === null) return;
     const x = 10 + (i * (W - 30)) / 13;
-    const y = H - 26 - ((v - 40) / 60) * (H - 40);
-    points.push(`${x.toFixed(1)},${Math.max(6, Math.min(H - 28, y)).toFixed(1)}`);
+    const y = BASE - ((v - 40) / 60) * (H - 40);
+    points.push(`${x.toFixed(1)},${Math.max(6, Math.min(BASE, y)).toFixed(1)}`);
   });
+
+  const areaPath = points.length > 1 ? `M ${points[0].split(',')[0]},${BASE} L ${points.join(' L ')} L ${points[points.length - 1].split(',')[0]},${BASE} Z` : '';
 
   const spot = weakSpot(history);
 
   return (
     <div className="mx-auto max-w-[480px] px-5 py-6">
-      <button className="text-[13px] mb-4" style={{ color: 'var(--ink-2)' }} onClick={onExit}>
-        ← 返回
-      </button>
-
-      <h1 className="text-[22px] font-medium">你的音准进步</h1>
-
-      <div className="grid grid-cols-3 gap-3 mt-5">
-        <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-          <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-            音准分
-          </p>
-          <p className="text-[24px] font-medium tabular">{score || '--'}</p>
-          <p className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-            近 7 次平均
-          </p>
-        </div>
-        <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-          <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-            平均偏差
-          </p>
-          <p className="text-[24px] font-medium tabular">{avgCents || '--'}¢</p>
-          <p className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-            越小越好
-          </p>
-        </div>
-        <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-          <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-            连续练习
-          </p>
-          <p className="text-[24px] font-medium tabular">{progress.streak} 天</p>
-          <p className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-            每天 3 关
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-3">
+        <button className="it-btn-ghost px-3 py-1.5 text-[13px]" onClick={onExit}>
+          ← 返回
+        </button>
+        <button
+          className="text-[13px] font-medium"
+          style={{ color: 'var(--brand)' }}
+          onClick={() => exportData(progress)}
+        >
+          导出数据
+        </button>
       </div>
 
-      <div className="mt-4 rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-        <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-          音准分趋势 · 近 14 天{valid.length ? `（最高 ${best}）` : ''}
-        </p>
-        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} className="mt-2" role="img">
+      <h1 className="text-[22px] font-semibold mt-3.5">你的音准进步</h1>
+      <p className="text-[13px] mt-0.5" style={{ color: 'var(--ink-2)' }}>
+        练得越连续，曲线越平滑
+      </p>
+
+      <div className="grid grid-cols-3 gap-2.5 mt-4">
+        <Stat label="音准分" value={String(score || '--')} hint="近 7 次平均" />
+        <Stat label="平均偏差" value={String(avgCents || '--')} unit="¢" hint="越小越好" />
+        <Stat label="连续练习" value={String(progress.streak)} unit=" 天" hint="每天 3 关" />
+      </div>
+
+      <div className="it-card mt-4 p-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
+            音准分趋势 · 近 14 天
+          </p>
+          {valid.length > 0 && (
+            <span className="it-badge" style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}>
+              最高 {best}
+            </span>
+          )}
+        </div>
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} className="mt-1.5" role="img">
           <title>近 14 天音准分趋势</title>
-          <line x1="10" y1={H - 26} x2={W - 20} y2={H - 26} stroke="#e8e6df" strokeWidth="1" />
+          <defs>
+            <linearGradient id="itArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--brand)" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="var(--brand)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <line x1="10" y1={BASE} x2={W - 20} y2={BASE} stroke="var(--line)" strokeWidth="1" />
+          {areaPath && <path d={areaPath} fill="url(#itArea)" />}
           {points.length > 1 && (
-            <polyline points={points.join(' ')} fill="none" stroke="var(--brand)" strokeWidth="1.5" />
+            <polyline
+              points={points.join(' ')}
+              fill="none"
+              stroke="var(--brand)"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
           )}
-          {points.length === 1 && (
-            <circle cx={10} cy={Number(points[0].split(',')[1])} r="3" fill="var(--brand)" />
-          )}
-          <text x="10" y={H - 8} fontSize="11" fill="#8a8983">
+          {points.map((p, i) => {
+            const [x, y] = p.split(',').map(Number);
+            return <circle key={i} cx={x} cy={y} r="2.6" fill="var(--card)" stroke="var(--brand)" strokeWidth="1.6" />;
+          })}
+          <text x="10" y={H - 8} fontSize="11" fill="var(--ink-3)">
             14 天前
           </text>
-          <text x={W - 50} y={H - 8} fontSize="11" fill="#8a8983">
+          <text x={W - 50} y={H - 8} fontSize="11" fill="var(--ink-3)">
             今天
           </text>
         </svg>
         {valid.length === 0 && (
-          <p className="text-[13px] mt-2" style={{ color: 'var(--ink-3)' }}>
+          <p className="text-[13px] mt-1" style={{ color: 'var(--ink-3)' }}>
             还没有数据，先去练一关。
           </p>
         )}
       </div>
 
       {last30.length > 0 && (
-        <div className="mt-4 rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+        <div className="it-card mt-4 p-4">
           <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
             偏差分布 · 近 {last30.length} 次（100¢ = 1 个半音）
           </p>
-          <div className="flex h-3.5 rounded-full overflow-hidden mt-2">
-            <div style={{ width: `${(near / total) * 100}%`, background: '#97c459' }} />
-            <div style={{ width: `${(mid / total) * 100}%`, background: '#ef9f27' }} />
-            <div style={{ width: `${(far / total) * 100}%`, background: '#f09595' }} />
+          <div className="flex h-3.5 rounded-full overflow-hidden mt-2.5">
+            <div style={{ width: `${(near / total) * 100}%`, background: 'var(--good-fill)' }} />
+            <div style={{ width: `${(mid / total) * 100}%`, background: 'var(--ok-fill)' }} />
+            <div style={{ width: `${(far / total) * 100}%`, background: 'var(--bad-fill)' }} />
           </div>
-          <div className="flex justify-between text-[11px] mt-2 tabular" style={{ color: 'var(--ink-3)' }}>
-            <span>很准 {Math.round((near / total) * 100)}%</span>
-            <span>有点飘 {Math.round((mid / total) * 100)}%</span>
-            <span>明显跑调 {Math.round((far / total) * 100)}%</span>
+          <div className="flex justify-between text-[11.5px] mt-2.5 tabular" style={{ color: 'var(--ink-3)' }}>
+            {[
+              ['很准', near, 'var(--good-fill)'],
+              ['有点飘', mid, 'var(--ok-fill)'],
+              ['明显跑调', far, 'var(--bad-fill)'],
+            ].map(([label, n, color]) => (
+              <span key={label as string} className="flex items-center gap-1.5">
+                <span
+                  className="inline-block rounded-full"
+                  style={{ width: 8, height: 8, background: color as string }}
+                />
+                {label as string} {Math.round(((n as number) / total) * 100)}%
+              </span>
+            ))}
           </div>
         </div>
       )}
 
-      <div className="mt-4 rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+      <div className="it-card mt-4 p-4">
         <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
           薄弱点
         </p>
-        <p className="text-[14px] mt-1">{spot ?? '再练几次，这里会告诉你哪个音程最容易跑。'}</p>
+        <p className="text-[14px] mt-1">
+          {spot ?? '再练几次，这里会告诉你哪个音程最容易跑。'}
+        </p>
       </div>
 
-      <button
-        className="w-full mt-4 rounded-xl py-3 text-[15px]"
-        style={{ border: '1px solid var(--line)' }}
-        onClick={() => exportData(progress)}
-      >
-        导出练习数据（JSON）
-      </button>
-      <p className="text-[12px] mt-2" style={{ color: 'var(--ink-3)' }}>
+      <p className="text-[12px] mt-4 text-center" style={{ color: 'var(--ink-3)' }}>
         数据只存在这台设备的浏览器里，导出后可自己复盘。
       </p>
     </div>

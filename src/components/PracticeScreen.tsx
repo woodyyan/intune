@@ -15,6 +15,8 @@ type Phase = 'intro' | 'listen' | 'silence' | 'sing' | 'result';
 
 const PREPARE_SEC = 0.5;
 
+const STEPS = ['听标准音', '准备开口', '跟着唱', '看结果'];
+
 type Props = {
   stage: StageId;
   progress: Progress;
@@ -266,10 +268,13 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
     unlockPct = Math.round((c * 0.6 + a * 0.4) * 100);
   }
 
+  const stepIndex = phase === 'silence' ? 1 : phase === 'sing' ? 2 : phase === 'result' ? 3 : 0;
+  const verdict = result ? verdictFor(result.score) : null;
+
   return (
     <div className="mx-auto max-w-[480px] px-5 py-6">
       {notice && (
-        <div className="pop mb-4 rounded-xl p-3" style={{ background: '#eaf3de' }}>
+        <div className="pop mb-4 rounded-2xl p-3.5" style={{ background: 'var(--good-soft)' }}>
           <p className="text-[14px] font-medium" style={{ color: 'var(--good)' }}>
             {notice}
           </p>
@@ -279,8 +284,8 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         </div>
       )}
 
-      <div className="flex items-center justify-between mb-4">
-        <button className="text-[13px]" style={{ color: 'var(--ink-2)' }} onClick={leave}>
+      <div className="flex items-center justify-between gap-3">
+        <button className="it-btn-ghost px-3 py-1.5 text-[13px]" onClick={leave}>
           ← 返回
         </button>
         <span className="text-[12px] tabular" style={{ color: 'var(--ink-3)' }}>
@@ -288,23 +293,50 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         </span>
       </div>
 
-      <h1 className="text-[20px] font-medium">{stageName(stage)}</h1>
-      <p className="text-[13px] mt-1" style={{ color: 'var(--ink-2)' }}>
+      <h1 className="text-[21px] font-semibold mt-3.5">{stageName(stage)}</h1>
+      <p className="text-[13px] mt-0.5" style={{ color: 'var(--ink-2)' }}>
         {round.hint}
       </p>
 
+      <div className="mt-4 flex items-start gap-1.5">
+        {STEPS.map((label, i) => {
+          const state = i < stepIndex ? 'done' : i === stepIndex ? 'now' : 'todo';
+          return (
+            <div key={label} className="flex-1">
+              <div
+                className="h-1 rounded-full"
+                style={{
+                  background:
+                    state === 'todo' ? 'var(--line)' : state === 'now' ? 'var(--brand)' : 'var(--brand-line)',
+                  boxShadow: state === 'now' ? '0 0 0 3px var(--brand-soft)' : undefined,
+                }}
+              />
+              <p
+                className="text-[11px] mt-1.5 whitespace-nowrap"
+                style={{
+                  color: state === 'todo' ? 'var(--ink-3)' : 'var(--brand)',
+                  fontWeight: state === 'now' ? 600 : 400,
+                }}
+              >
+                {label}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
       {nextLock && !nextLock.unlocked && (
-        <div className="mt-3 rounded-xl p-3" style={{ background: 'var(--brand-soft)' }}>
-          <div className="flex items-baseline justify-between">
+        <div className="it-inset mt-4 p-3.5" style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-line)' }}>
+          <div className="flex items-baseline justify-between gap-2">
             <span className="text-[12px]" style={{ color: 'var(--brand)' }}>
               距离解锁「{stageName(nextLock.target)}」
             </span>
-            <span className="text-[12px] tabular" style={{ color: 'var(--brand)' }}>
+            <span className="text-[12px] tabular font-medium" style={{ color: 'var(--brand)' }}>
               {unlockPct}%
             </span>
           </div>
           <p className="text-[13px] mt-0.5">{unlockText}</p>
-          <div className="mt-2 h-1.5 rounded-full" style={{ background: 'rgba(24,95,165,0.16)' }}>
+          <div className="mt-2 h-1.5 rounded-full" style={{ background: 'var(--brand-line)' }}>
             <div
               className="h-1.5 rounded-full"
               style={{ width: `${unlockPct}%`, background: 'var(--brand)' }}
@@ -313,20 +345,16 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         </div>
       )}
 
-      <div className="mt-5 rounded-2xl p-5" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+      <div className="it-card mt-4 p-5">
         {(phase === 'intro' || phase === 'result') && (
           <div>
-            <p className="text-[13px]" style={{ color: 'var(--ink-3)' }}>
+            <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
               本关目标
             </p>
-            <p className="text-[18px] font-medium mt-1">{round.label}</p>
+            <p className="text-[18px] font-semibold mt-0.5">{round.label}</p>
             <div className="flex flex-wrap gap-2 mt-3">
               {round.notes.map((n, i) => (
-                <span
-                  key={i}
-                  className="rounded-lg px-3 py-1 text-[13px] tabular"
-                  style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}
-                >
+                <span key={i} className="it-chip px-3 py-1 text-[13px] tabular">
                   {noteLabel(n.midi)}
                 </span>
               ))}
@@ -335,25 +363,28 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         )}
 
         {phase === 'listen' && (
-          <div className="text-center py-5">
-            <div className="flex items-end justify-center gap-1.5 h-10">
-              {[0, 1, 2, 3, 4, 5].map((i) => (
+          <div className="text-center py-4">
+            <span
+              className="it-badge"
+              style={{ background: 'var(--brand-soft)', color: 'var(--brand)' }}
+            >
+              <span className="breathe">●</span> 正在播放标准音
+            </span>
+            <div className="flex items-end justify-center gap-1.5 h-11 mt-3">
+              {[0, 1, 2, 3, 4, 5, 6].map((i) => (
                 <span
                   key={i}
-                  className="wave-bar rounded-sm"
+                  className="wave-bar rounded-full"
                   style={{
                     width: '5px',
-                    height: '30px',
-                    background: 'var(--brand)',
-                    animationDelay: `${i * 110}ms`,
+                    height: '34px',
+                    background: 'linear-gradient(180deg, var(--brand-2), var(--brand))',
+                    animationDelay: `${i * 100}ms`,
                   }}
                 />
               ))}
             </div>
-            <p className="text-[15px] mt-3" style={{ color: 'var(--brand)' }}>
-              正在播放标准音
-            </p>
-            <div className="mt-3 text-left">
+            <div className="mt-4 text-left">
               <NoteTimeline
                 notes={round.notes}
                 bpm={round.bpm}
@@ -368,33 +399,55 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         )}
 
         {phase === 'silence' && (
-          <div className="text-center py-6">
-            <div className="breathe">
-              <p className="text-[17px] font-medium" style={{ color: 'var(--brand)' }}>
-                该你唱了
-              </p>
-              <p className="text-[52px] font-medium tabular mt-1 leading-none">
-                {Math.max(tick, 0)}
-              </p>
-            </div>
+          <div className="text-center py-5">
+            <p className="text-[13px]" style={{ color: 'var(--ink-2)' }}>
+              接下来这样唱，心里先想一遍
+            </p>
             <div className="mt-3 text-left">
-              <NoteTimeline notes={round.notes} bpm={round.bpm} label="接下来这样唱" />
+              <NoteTimeline notes={round.notes} bpm={round.bpm} label="节奏" />
             </div>
-            <p className="text-[13px] mt-3" style={{ color: 'var(--ink-2)' }}>
-              心里先把第一个音想一遍，听到 0 就开口
+            <div className="relative flex items-center justify-center mt-5" style={{ height: 96 }}>
+              <span
+                className="halo absolute rounded-full"
+                style={{ width: 96, height: 96, background: 'var(--brand-soft)' }}
+              />
+              <span
+                className="absolute rounded-full"
+                style={{ width: 96, height: 96, background: 'var(--brand-soft)' }}
+              />
+              <span className="relative text-[46px] font-semibold tabular" style={{ color: 'var(--brand)' }}>
+                {Math.max(tick, 0)}
+              </span>
+            </div>
+            <p className="text-[15px] font-semibold mt-1" style={{ color: 'var(--brand)' }}>
+              该你唱了
+            </p>
+            <p className="text-[13px] mt-1" style={{ color: 'var(--ink-3)' }}>
+              听到 0 就开口，慢半拍也没关系
             </p>
           </div>
         )}
 
         {phase === 'sing' && (
           <div>
-            <div className="flex items-baseline justify-between">
-              <span className="text-[13px]" style={{ color: 'var(--ink-3)' }}>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
                 {isPreparing ? '准备' : '现在唱'}
               </span>
-              <span className="text-[26px] font-medium tabular">{noteLabel(target.midi)}</span>
-              <span className="text-[13px] tabular" style={{ color: 'var(--brand)' }}>
+              <span className="text-[13px] tabular font-medium" style={{ color: 'var(--brand)' }}>
                 {isPreparing ? '马上开始' : noteRemain > 0 ? `还剩 ${noteRemain.toFixed(1)}s` : '换音'}
+              </span>
+            </div>
+
+            <div
+              className="mt-2 rounded-2xl py-3 text-center"
+              style={{ background: 'var(--brand-soft)' }}
+            >
+              <span
+                className="text-[38px] font-semibold tabular leading-none"
+                style={{ color: 'var(--brand)' }}
+              >
+                {noteLabel(target.midi)}
               </span>
             </div>
 
@@ -429,8 +482,8 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
         {phase === 'result' && result && (
           <div className="rise">
             {!result.heard && (
-              <div className="rounded-lg p-4" style={{ background: '#fcebeb' }}>
-                <p className="text-[15px] font-medium" style={{ color: 'var(--bad)' }}>
+              <div className="rounded-2xl p-4" style={{ background: 'var(--bad-soft)' }}>
+                <p className="text-[15px] font-semibold" style={{ color: 'var(--bad)' }}>
                   这次没听到你的声音
                 </p>
                 <p className="text-[13px] mt-1" style={{ color: 'var(--ink-2)' }}>
@@ -439,146 +492,148 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
               </div>
             )}
             {result.heard && (
-            <>
-            <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
-              本关得分 · 满分 100
-            </p>
-            <div className="flex items-baseline gap-3">
-              <span className="text-[46px] font-medium tabular">{result.score}</span>
-              <span
-                className="text-[15px]"
-                style={{
-                  color:
-                    verdictFor(result.score).tone === 'good'
-                      ? 'var(--good)'
-                      : verdictFor(result.score).tone === 'ok'
-                        ? 'var(--ok)'
-                        : 'var(--bad)',
-                }}
-              >
-                {verdictFor(result.score).text}
-              </span>
-            </div>
-            <p className="text-[12px] mt-1" style={{ color: 'var(--ink-3)' }}>
-              命中率占 60% + 稳不稳占 20% + 起音准不准占 20%
-            </p>
-
-            <div className="mt-3 rounded-lg p-3" style={{ background: 'var(--paper)' }}>
-              <div className="flex items-baseline justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-                  你唱得差了多少
-                </span>
-                <span className="text-[20px] font-medium tabular">{result.meanAbsCents}¢</span>
-              </div>
-              <p className="text-[14px] mt-1">{centsMeaning(result.meanAbsCents).label}</p>
-              <p className="text-[12px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
-                {centsMeaning(result.meanAbsCents).hint}
-              </p>
-            </div>
-
-            <div className="mt-3 rounded-lg p-3" style={{ background: 'var(--paper)' }}>
-              <div className="flex items-baseline justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-                  唱在合格范围内的时间
-                </span>
-                <span className="text-[20px] font-medium tabular">
-                  {Math.round(result.hitRate * 100)}%
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
-                  你的音高轨迹
-                </span>
-                <span className="text-[11px]" style={{ color: 'var(--ink-3)' }}>
-                  绿带内 = 合格，线越平说明气息越稳
-                </span>
-              </div>
-              <PitchTrail points={resultTrail} tolerance={tolerance} />
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
-                每个音的表现 · ＋ 偏高，− 偏低
-              </p>
-              {result.noteResults.map((r, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-[13px] tabular w-20" style={{ color: 'var(--ink-2)' }}>
-                    {noteLabel(r.midi)}
+              <>
+                <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
+                  本关得分 · 满分 100
+                </p>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <span className="text-[46px] font-semibold tabular leading-none">
+                    {result.score}
                   </span>
-                  <div className="flex-1 h-2 rounded-full" style={{ background: 'var(--paper)' }}>
-                    <div
-                      className="h-2 rounded-full"
+                  {verdict && (
+                    <span
+                      className="it-badge"
                       style={{
-                        width: `${Math.round(r.hitRate * 100)}%`,
-                        background: r.hitRate > 0.6 ? '#97c459' : r.hitRate > 0.3 ? '#ef9f27' : '#f09595',
+                        background:
+                          verdict.tone === 'good'
+                            ? 'var(--good-soft)'
+                            : verdict.tone === 'ok'
+                              ? 'var(--ok-soft)'
+                              : 'var(--bad-soft)',
+                        color:
+                          verdict.tone === 'good'
+                            ? 'var(--good)'
+                            : verdict.tone === 'ok'
+                              ? 'var(--ok)'
+                              : 'var(--bad)',
                       }}
-                    />
-                  </div>
-                  <span className="text-[12px] tabular w-16 text-right" style={{ color: 'var(--ink-2)' }}>
-                    {r.frames < 3 ? '没唱出' : `${r.meanCents > 0 ? '+' : ''}${Math.round(r.meanCents)}¢`}
-                  </span>
+                    >
+                      {verdict.text}
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
+                <p className="text-[12px] mt-1.5" style={{ color: 'var(--ink-3)' }}>
+                  命中率占 60% + 稳不稳占 20% + 起音准不准占 20%
+                </p>
 
-            </>
+                <div className="grid grid-cols-2 gap-2.5 mt-3.5">
+                  <div className="it-inset p-3">
+                    <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
+                      你唱得差了多少
+                    </p>
+                    <p className="text-[22px] font-semibold tabular mt-0.5">
+                      {result.meanAbsCents}¢
+                    </p>
+                    <p className="text-[12.5px] mt-0.5">{centsMeaning(result.meanAbsCents).label}</p>
+                  </div>
+                  <div className="it-inset p-3">
+                    <p className="text-[12px]" style={{ color: 'var(--ink-2)' }}>
+                      唱在合格范围内
+                    </p>
+                    <p className="text-[22px] font-semibold tabular mt-0.5">
+                      {Math.round(result.hitRate * 100)}%
+                    </p>
+                    <p className="text-[12.5px] mt-0.5" style={{ color: 'var(--ink-3)' }}>
+                      {centsMeaning(result.meanAbsCents).hint}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-[12px] mb-2" style={{ color: 'var(--ink-2)' }}>
+                    你的音高轨迹
+                  </p>
+                  <PitchTrail points={resultTrail} tolerance={tolerance} />
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <p className="text-[12px]" style={{ color: 'var(--ink-3)' }}>
+                    每个音的表现 · ＋ 偏高，− 偏低
+                  </p>
+                  {result.noteResults.map((r, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-[13px] tabular w-16 flex-none" style={{ color: 'var(--ink-2)' }}>
+                        {noteLabel(r.midi)}
+                      </span>
+                      <div
+                        className="flex-1 h-2 rounded-full overflow-hidden"
+                        style={{ background: 'var(--line)' }}
+                      >
+                        <div
+                          className="h-2 rounded-full"
+                          style={{
+                            width: r.hitRate > 0 ? `max(6px, ${Math.round(r.hitRate * 100)}%)` : 0,
+                            background:
+                              r.hitRate > 0.6
+                                ? 'var(--good-fill)'
+                                : r.hitRate > 0.3
+                                  ? 'var(--ok-fill)'
+                                  : 'var(--bad-fill)',
+                          }}
+                        />
+                      </div>
+                      <span
+                        className="text-[12px] tabular w-16 flex-none text-right"
+                        style={{ color: 'var(--ink-2)' }}
+                      >
+                        {r.frames < 3 ? '没唱出' : `${r.meanCents > 0 ? '+' : ''}${Math.round(r.meanCents)}¢`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4">
         {phase === 'intro' && (
-          <>
+          <div className="flex gap-2">
             <button
-              className="flex-1 rounded-xl py-3 text-[15px] text-white"
-              style={{ background: 'var(--brand)' }}
+              className="it-btn flex-1 py-3 text-[15px]"
               onClick={runRound}
               disabled={status === 'starting'}
             >
               {status === 'starting' ? '准备中…' : '开始这关'}
             </button>
             <button
-              className="rounded-xl px-4 py-3 text-[15px]"
-              style={{ border: '1px solid var(--line)' }}
+              className="it-btn-ghost px-4 py-3 text-[15px]"
               onClick={() => void playNotes(round.notes, round.bpm)}
             >
               试听
             </button>
-          </>
+          </div>
         )}
 
         {phase === 'result' && (
-          <>
-            <button
-              className="flex-1 rounded-xl py-3 text-[15px] text-white"
-              style={{ background: 'var(--brand)' }}
-              onClick={nextRound}
-            >
+          <div className="space-y-2">
+            <button className="it-btn w-full py-3 text-[15px]" onClick={nextRound}>
               下一关
             </button>
-            <button
-              className="rounded-xl px-4 py-3 text-[15px]"
-              style={{ border: '1px solid var(--line)' }}
-              onClick={() => void replay()}
-            >
-              回放对比
-            </button>
-            <button
-              className="rounded-xl px-4 py-3 text-[15px]"
-              style={{ border: '1px solid var(--line)' }}
-              onClick={() => void runRound()}
-            >
-              再来一次
-            </button>
-          </>
+            <div className="flex gap-2">
+              <button className="it-btn-ghost flex-1 py-3 text-[15px]" onClick={() => void replay()}>
+                回放对比
+              </button>
+              <button className="it-btn-ghost flex-1 py-3 text-[15px]" onClick={() => void runRound()}>
+                再来一次
+              </button>
+            </div>
+          </div>
         )}
 
         {(phase === 'listen' || phase === 'silence' || phase === 'sing') && (
-          <p className="text-[13px]" style={{ color: 'var(--ink-3)' }}>
+          <p className="text-[13px] text-center" style={{ color: 'var(--ink-3)' }}>
             {phase === 'listen'
               ? '正在播放标准音，先把它记住'
               : phase === 'silence'
@@ -593,7 +648,7 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
           需要麦克风权限，请在浏览器弹窗里允许后重试。
         </p>
       )}
-      <p className="text-[12px] mt-4" style={{ color: 'var(--ink-3)' }}>
+      <p className="text-[12px] mt-4 text-center" style={{ color: 'var(--ink-3)' }}>
         戴耳机、清唱，效果最好。
       </p>
     </div>

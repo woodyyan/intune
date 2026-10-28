@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 960 960" width="960" height="960" role="img" aria-label="Intune">
 <!-- Intune · 同心 Concentric | 网格 8u 画布 1024=128u | 点 r=120(15u) 内半径 360(45u)=3x点 留白 240(30u)=2x点 环笔宽 72(9u) 外直径 864(108u) 缺口 40.0deg @12点/6点 | viewBox 已裁剪至外框+净空区 -->
-<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
-<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#1B4A63" stroke-width="72" stroke-linecap="butt"/>
-<circle cx="512" cy="512" r="120" fill="#1B4A63"/>
+<path d="M 647.4 139.9 A 396 396 0 0 1 647.4 884.1" fill="none" stroke="#4F46E5" stroke-width="72" stroke-linecap="butt"/>
+<path d="M 376.6 884.1 A 396 396 0 0 1 376.6 139.9" fill="none" stroke="#4F46E5" stroke-width="72" stroke-linecap="butt"/>
+<circle cx="512" cy="512" r="120" fill="#4F46E5"/>
 </svg>

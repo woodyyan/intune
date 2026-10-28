@@ -28,33 +28,33 @@ def blueprint():
     s.append('<title>几何标注</title>')
     s.append(f'<g opacity="0.13">{r("mark.svg").split(">", 1)[1].rsplit("</svg>", 1)[0]}</g>')
     # 水平轴线
-    s.append('<line x1="60" y1="512" x2="964" y2="512" stroke="#1B4A63" stroke-width="1" '
+    s.append('<line x1="60" y1="512" x2="964" y2="512" stroke="#4F46E5" stroke-width="1" '
              'stroke-dasharray="6 6" opacity="0.35"/>')
     # 尺寸链：点直径
-    s.append('<line x1="512" y1="392" x2="512" y2="512" stroke="#1B4A63" stroke-width="1" opacity="0.5"/>')
-    s.append('<line x1="492" y1="392" x2="532" y2="392" stroke="#1B4A63" stroke-width="1.5"/>')
-    s.append('<line x1="492" y1="632" x2="532" y2="632" stroke="#1B4A63" stroke-width="1.5"/>')
-    s.append('<text x="540" y="512" font-size="20" fill="#1B4A63" dominant-baseline="central">r = 120 (15u)</text>')
-    s.append('<text x="540" y="546" font-size="16" fill="#1B4A63" opacity="0.7" dominant-baseline="central">点直径 240</text>')
+    s.append('<line x1="512" y1="392" x2="512" y2="512" stroke="#4F46E5" stroke-width="1" opacity="0.5"/>')
+    s.append('<line x1="492" y1="392" x2="532" y2="392" stroke="#4F46E5" stroke-width="1.5"/>')
+    s.append('<line x1="492" y1="632" x2="532" y2="632" stroke="#4F46E5" stroke-width="1.5"/>')
+    s.append('<text x="540" y="512" font-size="20" fill="#4F46E5" dominant-baseline="central">r = 120 (15u)</text>')
+    s.append('<text x="540" y="546" font-size="16" fill="#4F46E5" opacity="0.7" dominant-baseline="central">点直径 240</text>')
     # 留白环
-    s.append(f'<line x1="{512+120}" y1="196" x2="{512+360}" y2="196" stroke="#1B4A63" stroke-width="1.5"/>')
-    s.append(f'<line x1="{512+120}" y1="186" x2="{512+120}" y2="206" stroke="#1B4A63" stroke-width="1.5"/>')
-    s.append(f'<line x1="{512+360}" y1="186" x2="{512+360}" y2="206" stroke="#1B4A63" stroke-width="1.5"/>')
-    s.append(f'<text x="{512+240}" y="176" font-size="18" fill="#1B4A63" text-anchor="middle">留白 240 = 2×点半径</text>')
+    s.append(f'<line x1="{512+120}" y1="196" x2="{512+360}" y2="196" stroke="#4F46E5" stroke-width="1.5"/>')
+    s.append(f'<line x1="{512+120}" y1="186" x2="{512+120}" y2="206" stroke="#4F46E5" stroke-width="1.5"/>')
+    s.append(f'<line x1="{512+360}" y1="186" x2="{512+360}" y2="206" stroke="#4F46E5" stroke-width="1.5"/>')
+    s.append(f'<text x="{512+240}" y="176" font-size="18" fill="#4F46E5" text-anchor="middle">留白 240 = 2×点半径</text>')
     # 内半径
-    s.append(f'<line x1="{512+360}" y1="228" x2="{512+360}" y2="512" stroke="#1B4A63" stroke-width="1" opacity="0.5"/>')
-    s.append(f'<text x="{512+372}" y="252" font-size="18" fill="#1B4A63">内半径 360 = 3×点半径</text>')
+    s.append(f'<line x1="{512+360}" y1="228" x2="{512+360}" y2="512" stroke="#4F46E5" stroke-width="1" opacity="0.5"/>')
+    s.append(f'<text x="{512+372}" y="252" font-size="18" fill="#4F46E5">内半径 360 = 3×点半径</text>')
     # 环笔宽
-    s.append(f'<line x1="{512+360}" y1="512" x2="{512+360+72}" y2="512" stroke="#1B4A63" stroke-width="3"/>')
-    s.append(f'<text x="{512+300}" y="470" font-size="16" fill="#1B4A63" text-anchor="end">环笔宽 72 (9u)</text>')
+    s.append(f'<line x1="{512+360}" y1="512" x2="{512+360+72}" y2="512" stroke="#4F46E5" stroke-width="3"/>')
+    s.append(f'<text x="{512+300}" y="470" font-size="16" fill="#4F46E5" text-anchor="end">环笔宽 72 (9u)</text>')
     # 缺口
-    s.append(f'<text x="512" y="86" font-size="18" fill="#1B4A63" text-anchor="middle">缺口 40° @ 12 点 / 6 点</text>')
-    s.append(f'<text x="512" y="112" font-size="15" fill="#1B4A63" opacity="0.7" text-anchor="middle">'
+    s.append(f'<text x="512" y="86" font-size="18" fill="#4F46E5" text-anchor="middle">缺口 40° @ 12 点 / 6 点</text>')
+    s.append(f'<text x="512" y="112" font-size="15" fill="#4F46E5" opacity="0.7" text-anchor="middle">'
              f'左右两条弧 = 两个声部；垂直方向 = 音高轴</text>')
     # 外框
     s.append(f'<rect x="{512-OUTER}" y="{512-OUTER}" width="{2*OUTER}" height="{2*OUTER}" '
-             f'fill="none" stroke="#1B4A63" stroke-width="1" stroke-dasharray="8 6" opacity="0.4"/>')
-    s.append(f'<text x="{512-OUTER}" y="{512-OUTER-14}" font-size="16" fill="#1B4A63">外直径 864 (108u)</text>')
+             f'fill="none" stroke="#4F46E5" stroke-width="1" stroke-dasharray="8 6" opacity="0.4"/>')
+    s.append(f'<text x="{512-OUTER}" y="{512-OUTER-14}" font-size="16" fill="#4F46E5">外直径 864 (108u)</text>')
     s.append('</svg>')
     return "".join(s)
 
@@ -145,7 +145,7 @@ spec = f"""# Intune 标识使用规范 · 同心 Concentric
 
 # ---------- HTML 骨架 ----------
 CSS = """
-:root{--ink:#1c1c1a;--ink2:#5f5e5a;--ink3:#8a8983;--line:#e8e6df;--paper:#fafafa;--brand:#1B4A63;}
+:root{--ink:#1c1c1a;--ink2:#5f5e5a;--ink3:#8a8983;--line:#e8e6df;--paper:#fafafa;--brand:#4F46E5;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1080px;margin:0 auto;padding:48px 28px 80px}
@@ -252,7 +252,7 @@ def scenarios():
 
 
 CLASH = [("Target（靶心）", "Target 是三色同心实心环、完整闭合、红色",
-          "我们是单环 + 两个 40° 缺口、单色墨青；缺口让「闭合靶环」的完形不成立"),
+          "我们是单环 + 两个 40° 缺口、单色共振紫；缺口让「闭合靶环」的完形不成立"),
          ("Mastercard", "两个交叠的实心圆，红黄双色",
           "我们是环 + 心的同心结构，非交叠，单色"),
          ("Spotify", "三条形弧线 + 圆，绿色，弧线等距平行",
@@ -266,7 +266,7 @@ SEMANTIC = [("180° 旋转", "缺口仍在 12/6 点（旋转不变），圆点�
             ("负空间暗藏物", "只有一圈留白环与两个缺口，无隐藏字符或形象", "已查无问题"),
             ("中央实心圆 / 国旗联想",
              "规则：浅底 + 中央实心圆默认否决。此处圆点在**圆环内部**，外环提供了明确框架，"
-             "完形是「准心」而非「旗面上的圆」；主色为墨青而非红白配色。"
+             "完形是「准心」而非「旗面上的圆」；主色为共振紫而非红白配色。"
              "与日本（白底红圆）、孟加拉（绿底红圆）、帕劳（蓝底黄圆）逐项比对，无同构关系",
              "已规避（方案：圆点置于环内 + 非红白配色）"),
             ("宗教 / 文化符号", "无十字、无星月、无曼陀罗结构", "已查无问题"),
@@ -342,7 +342,7 @@ report = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 
 <h2>1. KPI 摘要</h2>
 {table([("图形元素数", "2（弧 ×2 属同一元素 + 点）—— 元素预算 ≤3 ✓"),
-        ("颜色数", "1（单色墨青）"),
+        ("颜色数", "1（单色共振紫）"),
         ("比例系统", "整数比 3:1 / 2:1 + 8u 网格（1024 = 128u）"),
         ("白底对比度", f"{COL['contrastOnWhite']}:1（WCAG AAA）"),
         ("最小可用尺寸", "24px（16px 用降级版）"),
@@ -391,7 +391,7 @@ report = f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
         ("为什么缺口开在 12/6 点而不是 3/9 点",
          "3/9 点开口时上下两条弧读作两个独立括号，中心松散；改到 12/6 点后左右弧环抱中心点，凝聚感成立"),
         ("为什么缺口 40° 而不是更小", "小缺口在小尺寸会消失，等于把唯一的记忆点做成最脆弱的部分；40° 在任意尺寸都读得出"),
-        ("为什么主色是墨青 #1B4A63",
+        ("为什么主色是共振紫 #4F46E5",
          "避开行业俗套的科技蓝与音乐常用的绿/紫；低饱和深色 + 大留白更接近「高级感」，"
          "且白底对比度 9.52:1 优于原品牌蓝"),
         ("中央实心圆的国旗风险", "已规避：圆点在环内（有框架）+ 非红白配色，完形是准心不是旗面")], ["决策", "理由"])}
