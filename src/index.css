@@ -12,7 +12,7 @@
 
   /* ── 主题：共振紫 Resonance Violet ─────── */
   --brand: #4f46e5;
-  --brand-2: #7c6cf5;
+  --brand-2: #6d5cea;
   --brand-deep: #3730a3;
   --brand-soft: #eeecfe;
   --brand-line: #dcd8fb;
@@ -152,7 +152,7 @@ button {
   overflow: hidden;
   border-radius: 22px;
   color: #fff;
-  background: linear-gradient(135deg, #6f5ef2 0%, #4f46e5 52%, #402fc4 100%);
+  background: linear-gradient(135deg, #6350e8 0%, #4f46e5 52%, #402fc4 100%);
   box-shadow: 0 12px 30px rgba(79, 70, 229, 0.26);
 }
 

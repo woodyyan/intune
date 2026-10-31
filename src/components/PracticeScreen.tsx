@@ -9,7 +9,7 @@ import {
   playNotes,
   stopAll,
 } from '../lib/audio';
-import { scoreRound, verdictFor, type Sample } from '../lib/scoring';
+import { scoreRound, stableWindow, verdictFor, type Sample } from '../lib/scoring';
 import { centsBetween, noteLabel } from '../lib/music';
 import { generateRound, stageName, toleranceFor, type Range } from '../lib/curriculum';
 import { usePitchEngine } from '../hooks/usePitchEngine';
@@ -22,6 +22,9 @@ import type { Progress, Round, RoundResult, StageId } from '../types';
 type Phase = 'intro' | 'listen' | 'silence' | 'sing' | 'result';
 
 const PREPARE_SEC = 0.5;
+
+/** 音高轨迹的指数平滑系数：越大跟得越紧，越小越平 */
+const TRAIL_SMOOTH = 0.45;
 
 const STEPS = ['听标准音', '准备开口', '跟着唱', '看结果'];
 
@@ -78,6 +81,7 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
   const timersRef = useRef<number[]>([]);
   const recorderRef = useRef<VoiceRecorder | null>(null);
   const scoredRef = useRef(false);
+  const smoothRef = useRef<number | null>(null);
 
   useEffect(() => {
     phaseRef.current = phase;
@@ -153,6 +157,7 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
   const runRound = useCallback(async () => {
     scoredRef.current = false;
     samplesRef.current = [];
+    smoothRef.current = null;
     setTrail([]);
     setResult(null);
     setRecording(null);
@@ -201,13 +206,29 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
       const t = (performance.now() - singStartRef.current) / 1000;
       samplesRef.current.push({ t, freq: f.freq, rms: f.rms });
       const idx = noteIndexAt(t);
-      if (idx >= 0 && f.freq !== null) {
-        const c = centsBetween(f.freq, round.notes[idx].midi);
-        setLiveCents(c);
-        setTrail((prev) => [...prev.slice(-599), c]);
-      } else {
-        setLiveCents(null);
+      const note = idx >= 0 ? round.notes[idx] : null;
+
+      // 只在音符的「稳定段」取点：起音有滑音、收尾有下滑，
+      // 换音时声音还停在两个音之间，按旧音算会瞬间跳几百音分。
+      let stable = false;
+      if (note && f.freq !== null) {
+        const w = stableWindow(note, round.bpm);
+        stable = t >= w.start && t <= w.end;
       }
+
+      if (note && f.freq !== null && stable) {
+        const c = centsBetween(f.freq, note.midi);
+        const prev = smoothRef.current;
+        const sm = prev === null ? c : prev + TRAIL_SMOOTH * (c - prev);
+        smoothRef.current = sm;
+        setLiveCents(sm);
+        setTrail((p) => [...p.slice(-599), sm]);
+        return;
+      }
+
+      // 起音 / 换音滑音 / 没出声：轨迹断开，游标保持上一个稳定值
+      smoothRef.current = null;
+      setTrail((p) => [...p.slice(-599), NaN]);
     });
 
     const stream = mic.current?.mediaStream;
@@ -238,6 +259,7 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
     setResult(null);
     setRecording(null);
     setTrail([]);
+    smoothRef.current = null;
     setRound(generateRound(stage, progress.difficulty, range));
     setTolerance(toleranceFor(progress.difficulty));
   }, [clearTimers, setSink, stage, progress.difficulty, range]);
@@ -254,7 +276,13 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
   const resultTrail = useMemo(() => {
     if (trail.length <= 240) return trail;
     const step = Math.ceil(trail.length / 240);
-    return trail.filter((_, i) => i % step === 0);
+    const out: number[] = [];
+    for (let i = 0; i < trail.length; i += step) {
+      const win = trail.slice(i, i + step);
+      // 窗口里只要有滑音断点，整段就标记为断开，避免把两个音连成尖峰
+      out.push(win.some((v) => !Number.isFinite(v)) ? NaN : win[win.length - 1]);
+    }
+    return out;
   }, [trail]);
 
   const target = round.notes[liveNote] ?? round.notes[0];

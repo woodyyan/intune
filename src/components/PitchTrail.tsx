@@ -1,4 +1,7 @@
+import { buildTrail } from '../lib/trail';
+
 type Props = {
+  /** 音分偏差序列；NaN 表示换音滑音区，轨迹在此断开 */
   points: number[];
   tolerance: number;
 };
@@ -9,16 +12,7 @@ const MID = H / 2;
 
 export default function PitchTrail({ points, tolerance }: Props) {
   const band = (tolerance / 100) * MID;
-  const step = points.length > 1 ? W / (points.length - 1) : W;
-  const path = points
-    .map((c, i) => {
-      const x = i * step;
-      const y = MID - (c / 100) * MID;
-      return `${x.toFixed(1)},${Math.max(2, Math.min(H - 2, y)).toFixed(1)}`;
-    })
-    .join(' ');
-  const last = points.length ? points[points.length - 1] : null;
-  const lastY = last === null ? MID : Math.max(2, Math.min(H - 2, MID - (last / 100) * MID));
+  const { segments, last } = buildTrail(points, W, H);
 
   return (
     <div className="it-inset p-2">
@@ -34,19 +28,25 @@ export default function PitchTrail({ points, tolerance }: Props) {
           strokeWidth="0.5"
           strokeDasharray="3 3"
         />
-        {points.length > 1 && (
-          <polyline
-            points={path}
-            fill="none"
-            stroke="var(--brand)"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
+        {segments.map((seg, i) =>
+          seg.length > 1 ? (
+            <polyline
+              key={i}
+              points={seg.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
+              fill="none"
+              stroke="var(--brand)"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+          ) : (
+            <circle key={i} cx={seg[0].x} cy={seg[0].y} r="1.8" fill="var(--brand)" />
+          ),
         )}
-        {last !== null && <circle cx={W} cy={lastY} r="3.6" fill="var(--accent)" />}
+        {last && <circle cx={last.x} cy={last.y} r="3.6" fill="var(--accent)" />}
       </svg>
       <p className="text-[11px] mt-1 text-center" style={{ color: 'var(--ink-3)' }}>
-        带内 = 合格范围，线越平稳说明气息越稳
+        带内 = 合格范围，换音时的滑音已跳过
       </p>
     </div>
   );

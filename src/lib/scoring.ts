@@ -12,6 +12,23 @@ const ATTACK_GRACE = 0.1;
 const LATENESS_MIN = 0.05;
 const LATENESS_MAX = 0.8;
 
+/**
+ * 音符的「稳定段」—— 起音有滑音、收尾有下滑，换音时声音还停在两个音之间，
+ * 按旧音去算音分会瞬间跳几百音分。实时轨迹只画这一段，滑音处断开。
+ * 返回相对乐句起点的秒数区间。
+ */
+export function stableWindow(note: Note, bpm: number): { start: number; end: number } {
+  const spb = 60 / bpm;
+  const s = note.start * spb;
+  const e = (note.start + note.dur) * spb;
+  const dur = Math.max(0.12, e - s);
+  const grace = Math.min(ATTACK_GRACE, dur * 0.3);
+  const tail = Math.min(0.06, dur * 0.2);
+  const start = s + grace;
+  const end = e - tail;
+  return { start, end: Math.max(start, end) };
+}
+
 function alignToFirstAudible(samples: Sample[], expectedFirstStart: number): Sample[] {
   const first = samples.find((s) => s.freq !== null && s.rms >= 0.006);
   if (!first) return samples;

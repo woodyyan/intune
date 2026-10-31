@@ -1,8 +1,9 @@
 import { YinDetector } from '../src/lib/yin';
 import { centsBetween, midiToFreq } from '../src/lib/music';
-import { scoreRound, type Sample } from '../src/lib/scoring';
+import { scoreRound, stableWindow, type Sample } from '../src/lib/scoring';
 import { generateRound } from '../src/lib/curriculum';
 import { buildTrend } from '../src/lib/trend';
+import { buildTrail } from '../src/lib/trail';
 import type { Note, SessionRecord } from '../src/types';
 
 let failed = 0;
@@ -233,6 +234,43 @@ check('没有历史时是空态', empty.unit === 'empty' && empty.points.length 
 const many = Array.from({ length: 40 }, (_, i) => rec(50 + (i % 20), NOW - (40 - i) * 60000));
 const t3 = buildTrend(many, NOW);
 check('按次展示最多取最近 14 次', t3.unit === 'round' && t3.points.length === 14, `points=${t3.points.length}`);
+
+const wLong = stableWindow({ midi: 60, start: 0, dur: 3 }, 60);
+check(
+  '稳定段跳过起音与收尾（长音 3 拍）',
+  Math.abs(wLong.start - 0.1) < 1e-6 && Math.abs(wLong.end - 2.94) < 1e-6,
+  `start=${wLong.start.toFixed(3)} end=${wLong.end.toFixed(3)}`,
+);
+
+const wShort = stableWindow({ midi: 60, start: 1, dur: 0.5 }, 108);
+check(
+  '短音的稳定段按比例收缩且不倒置',
+  wShort.end > wShort.start && wShort.end - wShort.start > 0.1,
+  `start=${wShort.start.toFixed(3)} end=${wShort.end.toFixed(3)} len=${(wShort.end - wShort.start).toFixed(3)}`,
+);
+
+const wTiny = stableWindow({ midi: 60, start: 0, dur: 0.1 }, 120);
+check('极短音的稳定段也不会倒置', wTiny.end >= wTiny.start, `start=${wTiny.start.toFixed(3)} end=${wTiny.end.toFixed(3)}`);
+
+const breakTrail = buildTrail([0, 5, 8, NaN, 10, 12, NaN, 6], 320, 74);
+check(
+  '换音滑音把轨迹断成多段（不再出现跨音尖峰）',
+  breakTrail.segments.length === 3 && breakTrail.segments.every((s) => s.length >= 1),
+  `segments=${breakTrail.segments.length} sizes=${breakTrail.segments.map((s) => s.length).join(',')}`,
+);
+
+const solidTrail = buildTrail([0, 5, 10, 4], 320, 74);
+check('没有滑音时只画一条折线', solidTrail.segments.length === 1 && solidTrail.segments[0].length === 4, `segments=${solidTrail.segments.length}`);
+
+const allGap = buildTrail([NaN, NaN, NaN], 320, 74);
+check('全是滑音时不画折线', allGap.segments.length === 0 && allGap.last === null, `segments=${allGap.segments.length}`);
+
+const wild = buildTrail([-900, 0, 900], 320, 74);
+check(
+  '超出量程的音分被夹在画布内',
+  wild.segments[0].every((p) => p.y >= 2 && p.y <= 72),
+  wild.segments[0].map((p) => p.y.toFixed(0)).join(','),
+);
 
 console.log(failed === 0 ? '\nALL PASS' : `\n${failed} FAILED`);
 if (failed > 0) throw new Error(`${failed} checks failed`);
