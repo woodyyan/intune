@@ -147,12 +147,15 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
     setPhase('result');
     const blob = await recorderRef.current?.stop();
     setRecording(blob ?? null);
+    // 唱完立刻释放麦克风：iOS 会切回 playback 分类，
+    // 「回放对比」才会走扬声器而不是听筒
+    stop();
     if (scoredRef.current) return;
     scoredRef.current = true;
     const res = scoreRound(stage, round.label, round.notes, samplesRef.current, round.bpm, tolerance);
     setResult(res);
     onResult(res);
-  }, [clearTimers, onResult, round, stage, tolerance]);
+  }, [clearTimers, onResult, round, stage, stop, tolerance]);
 
   const runRound = useCallback(async () => {
     scoredRef.current = false;
@@ -165,10 +168,10 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
     setElapsed(0);
     setLiveNote(0);
 
-    // 先把声音解锁了再开麦克风：iOS 的 resume 必须在手势窗口内发起，
-    // 而 getUserMedia 弹权限框会把这个窗口耗光。
+    // 先解锁声音。这里【故意不开麦克风】：
+    // iOS 一调 getUserMedia 就把音频会话翻成 playAndRecord（不带 defaultToSpeaker），
+    // 标准音会被降级到听筒。所以播完再开麦，播放期间保持 playback 分类 → 扬声器。
     await ensureAudio();
-    if (status !== 'running') await start();
 
     setPhase('listen');
     phaseRef.current = 'listen';
@@ -185,6 +188,9 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
 
     setPhase('silence');
     phaseRef.current = 'silence';
+    setTick(2);
+    // 标准音播完了，这时候才开麦克风（首次会弹权限框，正好卡在"准备开口"）
+    if (status !== 'running') await start();
     let left = 2;
     setTick(left);
     await new Promise<void>((resolve) => {
@@ -455,14 +461,22 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
                 style={{ width: 96, height: 96, background: 'var(--brand-soft)' }}
               />
               <span className="relative text-[46px] font-semibold tabular" style={{ color: 'var(--brand)' }}>
-                {Math.max(tick, 0)}
+                {status === 'starting' ? (
+                  <span className="breathe" style={{ fontSize: 34 }}>
+                    ●
+                  </span>
+                ) : (
+                  Math.max(tick, 0)
+                )}
               </span>
             </div>
             <p className="text-[15px] font-semibold mt-1" style={{ color: 'var(--brand)' }}>
-              该你唱了
+              {status === 'starting' ? '正在开启麦克风…' : '该你唱了'}
             </p>
             <p className="text-[13px] mt-1" style={{ color: 'var(--ink-3)' }}>
-              听到 0 就开口，慢半拍也没关系
+              {status === 'starting'
+                ? '第一次会弹权限框，点「允许」后自动倒计时'
+                : '听到 0 就开口，慢半拍也没关系'}
             </p>
           </div>
         )}
@@ -657,7 +671,7 @@ export default function PracticeScreen({ stage, progress, range, onResult, onExi
 
         {IS_IOS && phase === 'intro' && (
           <p className="text-[11.5px] mt-2.5 text-center" style={{ color: 'var(--ink-3)' }}>
-            听不到声音？iPhone 机身左侧的静音键如果露出橙色，Safari 不会出声。
+            标准音用扬声器播放，开唱时才启用麦克风；若仍无声，检查机身左侧静音键。
           </p>
         )}
 

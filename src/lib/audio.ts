@@ -39,6 +39,41 @@ export function userInteracted(): void {
   interacted = true;
 }
 
+/**
+ * W3C Audio Session API（Safari 16.4+）。
+ *
+ * iOS 上 Web 页面拿不到 AVAudioSession，Safari 只能根据你调了哪些 API 来推断分类：
+ * 只用 AudioContext → playback（走扬声器）；一旦 getUserMedia → playAndRecord，
+ * 而且不带 defaultToSpeaker，声音就被降级到听筒（很小声、像打电话）。
+ * 这个 API 可以显式声明意图，告诉系统"我现在是放音乐"还是"我在双向通话"。
+ * 只是 hint，各版本行为有差异，所以全部包在 try 里、做特性检测。
+ */
+type SessionType = 'auto' | 'playback' | 'play-and-record';
+
+function setSession(type: SessionType): void {
+  try {
+    const nav = navigator as Navigator & { audioSession?: { type: string } };
+    if (nav.audioSession) nav.audioSession.type = type;
+  } catch {
+    /* 不支持就忽略 */
+  }
+}
+
+/** 即将播放音频：声明为媒体播放，让 iOS 走扬声器并按"音乐"对待 */
+export function declarePlayback(): void {
+  setSession('playback');
+}
+
+/** 拿到麦克风之后声明双向：这一步才会让 iOS 重新计算路由 */
+export function declarePlayAndRecord(): void {
+  setSession('play-and-record');
+}
+
+/** 释放麦克风：交还给播放分类 */
+export function declareAuto(): void {
+  setSession('auto');
+}
+
 export function hasInteracted(): boolean {
   return interacted;
 }
@@ -67,6 +102,7 @@ export function unlockAudio(): void {
 /** 每次发声前调用：确认上下文在运行，必要时重试 resume（iOS 弹权限框后会挂起会话） */
 export async function ensureAudio(): Promise<boolean> {
   userInteracted();
+  declarePlayback();
   await withTimeout(Tone.start(), 2000);
   for (let i = 0; i < 3 && audioState() !== 'running'; i++) {
     const ctx = rawContext();
